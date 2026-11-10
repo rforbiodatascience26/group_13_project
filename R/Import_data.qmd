@@ -1,0 +1,55 @@
+---
+title: "Import_data"
+format: html
+---
+
+```{r}
+#| label: packages
+# Packages used should be installed before loading
+library("tidyverse")
+library("readxl")
+```
+
+```{r}
+#| label: getting-data
+# Pulls the data from the online source into _raw/
+
+## Creating directories if they don't exist
+raw_dir <- "../data/_raw/"
+
+if( !dir.exists("../data/") ){
+  dir.create(path = "../data/")}
+
+if( !dir.exists(raw_dir) ){
+  dir.create(path = raw_dir)}
+
+## Defining what files to be extracted from zenodo
+files <- tibble(
+  name = c("tpc119453_Supplemental Data Set 1.xlsx",
+           "tpc119453_Supplemental Data Set 2.xlsx",
+           "tpc119453_Supplemental Data Set 3.xlsx",
+           "tpc119453_Supplemental Data Set 4.xlsx",
+           "tpc119453_Supplemental Data Set 5.xlsx",
+           "tpc119453_Supplemental Data Set 6.xlsx"),
+  url  = str_c("https://zenodo.org/records/4936221/files/",
+               URLencode(name), "?download=1")
+)
+
+## The function that extracts each file and clean the name (to not have spaces)
+## Will not rerun if the files already exist
+get_file <- function(name, url) {
+  clean_name <- str_replace_all(name, " ", "_")
+  dest <- str_c(raw_dir, clean_name)
+  if (!file.exists(dest) || file.size(dest) < 10000) {
+    download.file(url, destfile = dest, mode = "wb")
+  }
+  dest
+}
+
+## Running the download
+paths <- map2_chr(files$name, files$url, get_file)
+```
+
+```{r}
+
+```
