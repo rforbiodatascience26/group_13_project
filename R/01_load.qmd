@@ -1,0 +1,49 @@
+---
+title: "01_load"
+format: html
+---
+
+#### Libraries
+
+```{r}
+library("tidyverse")
+library("here")
+library("readxl")
+library("rdryad")
+```
+
+#### Getting the data
+
+After some attempts at downloading the found data programmatically via the `rdryad` package, which all have failed, we have resorted to manually uploading the data files to the `_raw` folder, from which we then import the excel files using `read_excel`.
+
+```{r}
+#url_1 <- "https://datadryad.org/downloads/file_stream/248659"
+#dest_file_1 <- file.path(data_path, "tpc119453_Supplemental_Data_Set_1.xlsx")
+
+Sys.setenv(DRYAD_API_TOKEN = "11EUwxIno8Baj36be8l496pgZbFotVXWgrrbcYo_-5g")
+
+my_doi <- "10.5061/dryad.4f7n5"
+#downloaded_files <- dryad_download(dois = my_doi)
+# 2. Extract the dataset metadata to find individual file IDs
+meta <- dryad_dataset(dois = my_doi)
+
+# 3. Pull out the specific numeric file IDs from the metadata
+# (This extracts the IDs for all files attached to this specific dataset)
+file_ids <- meta[[1]]$links$`stash:files`
+
+# 4. Download each file one by one via its distinct ID
+# You can specify a local directory path if you want to save them outside your cache
+downloaded_paths <- dryad_files_download(ids = file_ids)
+
+# View where your files successfully saved on your network drive
+print(downloaded_paths)
+```
+
+#### Example of loading local file into .xlsx
+
+```{r}
+tpc119453_Supplemental_Data_Set_5 <- read_excel(
+  "~/Projects/group_13_exam_project/data/_raw/tpc119453_Supplemental+Data+Set+5.xlsx",
+  sheet = "DataSet5A", skip = 6)
+
+```
