@@ -33,14 +33,20 @@ files <- tibble(
            "tpc119453_Supplemental Data Set 5.xlsx",
            "tpc119453_Supplemental Data Set 6.xlsx"),
   url  = str_c("https://zenodo.org/records/4936221/files/",
-               URLencode(name), "?download=1")
+               URLencode(name), # convert string to comply with URL format
+               "?download=1") # add query string to request download 
 )
 
-## The function that extracts each file and clean the name (to not have spaces)
-## Will not rerun if the files already exist
+## The function that downloads each file and clean the name (to not have spaces)
 get_file <- function(name, url) {
+  
+  # Replace spaces in the file name with underscores
   clean_name <- str_replace_all(name, " ", "_")
+  
+  # Create destination path for the file
   dest <- str_c(raw_dir, clean_name)
+  
+  # Only run if file at destination doesn't exist or is smaller than 10k bytes
   if (!file.exists(dest) || file.size(dest) < 10000) {
     download.file(url, destfile = dest, mode = "wb")
   }
