@@ -78,23 +78,80 @@ write_csv(Data_Set_1, file = "../data/data_set1.csv")
 #### Make Data Set 1 Readable
 
 ```{r}
+# Make a tibble of the desired gene IDs for semi_join
+genes <- tibble(Gene_ID =
+                  c("Solyc05g053090",
+                    "Solyc01g008710",
+                    "Solyc03g111720",
+                    "Solyc01g095080",
+                    "Solyc05g050010",
+                    "Solyc10g080210",
+                    "Solyc02g036350",
+                    "Solyc02g086930",
+                    "Solyc02g077920",
+                    "Solyc07g055920",
+                    "Solyc03g114830",
+                    "Solyc08g080640",
+                    "Solyc05g012020",
+                    "Solyc10g006880",
+                    "Solyc10g047030",
+                    "Solyc09g075440",
+                    "Solyc03g044300",
+                    "Solyc12g008840",
+                    "Solyc01g009010",
+                    "Solyc10g081650",
+                    "Solyc09g089580",
+                    "Solyc08g080090",
+                    "Solyc07g049530",
+                    "Solyc06g069430",
+                    "Solyc04g079960",
+                    "Solyc03g031860",
+                    "Solyc12g098710",
+                    "Solyc06g051800",
+                    "Solyc01g006540",
+                    "Solyc03g095900",
+                    "Solyc03g083910",
+                    "Solyc09g010210")
+)
+
 Data_Set1 <- read_csv("../data/data_set1.csv", show_col_types = F)
 Data_Set1 <- Data_Set1 |> 
   
-  # find the first 8 columns 
-  select(matches("\\.\\.\\.[1-8]$")) |> 
+  # Find the first 8 columns and all coloumns of fold change
+  select(matches("\\.\\.\\.[1-8]$"), starts_with("FC")) |>
   
-  rename("Gene_ID" = "...1",
-         "Description" = "...2",
-         "AC_G" = "G...3",
-         "AC_P" = "P...4",
-         "TF18_G" = "G...5",
-         "TF18_P" = "P...6",
-         "rin_G" = "G...7",
-         "rin_P" = "P...8") |> 
+  # Renaming coloumn names
+  rename("Gene_ID" = 1,
+         "Description" = 2,
+         "AC_G" = 3,
+         "AC_P" = 4,
+         "TF18_G" = 5,
+         "TF18_P" = 6,
+         "rin_G" = 7,
+         "rin_P" = 8,
+         "FC_AC(P/G)" = 9,
+         "FC_TF18(P/G)" = 10,
+         "FC_rin(P/G)" = 11,
+         "FC_TF18_P/AC_P)" = 12,
+         "FC_rin_P/AC_P)" = 13,
+         "FC_TF18_P/rin_P)" = 14,
+         "FC_TF18_G/AC_G)" = 15,
+         "FC_rin_G/AC_G)" = 16,
+         "FC_TF18_G/rin_G)" = 17,
+         ) |>
   
   # set Gene_ID as a factor for later plotting
-  mutate(Gene_ID = as_factor(Gene_ID)) 
+  mutate(Gene_ID = as_factor(Gene_ID)) |>
+  
+  # Semi_join to only get the Gene_IDs used in the paper
+  semi_join(genes, by = "Gene_ID") |>
+  
+  #Divide mean and standard deviation into each their columme
+  separate_wider_delim(c(AC_G, AC_P, TF18_P, TF18_G, rin_P, rin_G),  
+                       delim = " ± ",
+                       names = c("mean", "sd"),
+                       names_sep = "_"
+  ) 
 ```
 
 #### 
