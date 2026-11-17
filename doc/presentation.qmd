@@ -1,0 +1,23 @@
+---
+title: "presentation group 13"
+Author: s194659 - Jakob-Ytte s224991 - s224991 s203517 - s203517 s215081 - MOrkild s215049 - Fredivildbasse
+format: revealjs
+---
+
+# Introduction
+
+## Data from article
+
+Transcriptional Regulation of Fruit Ripening by Tomato FRUITFULL Homologs and Associated MADS Box Proteins
+
+published 10th January 2014
+
+# Methods and materials
+
+## Data wrangling
+
+# Results
+
+## Figure 1A
+
+## Discussion
