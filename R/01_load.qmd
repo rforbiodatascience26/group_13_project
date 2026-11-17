@@ -8,6 +8,7 @@ format: html
 # Packages used should be installed before loading
 library("tidyverse")
 library("readxl")
+library("here")
 ```
 
 ```{r}
@@ -48,18 +49,4 @@ get_file <- function(name, url) {
 
 ## Running the download
 paths <- map2_chr(files$name, files$url, get_file)
-```
-
-#### Loading the files into tibbles
-
-```{r}
-Data_Set_1 <- read_excel(
-  here("data/_raw/tpc119453_Supplemental_Data_Set_1.xlsx"))
-
-Data_Set_2 <- read_excel(
-  here("data/_raw/tpc119453_Supplemental_Data_Set_2.xlsx"))
-
-Data_Set_3 <- read_excel(
-  here("data/_raw/tpc119453_Supplemental_Data_Set_3.xlsx"), sheet = "table")
-
 ```
