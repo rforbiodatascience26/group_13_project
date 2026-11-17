@@ -1,49 +1,65 @@
 ---
-title: "01_load"
+title: "Import_data"
 format: html
 ---
 
-#### Libraries
-
 ```{r}
+#| label: packages
+# Packages used should be installed before loading
 library("tidyverse")
-library("here")
 library("readxl")
-library("rdryad")
 ```
 
-#### Getting the data
-
-After some attempts at downloading the found data programmatically via the `rdryad` package, which all have failed, we have resorted to manually uploading the data files to the `_raw` folder, from which we then import the excel files using `read_excel`.
-
 ```{r}
-#url_1 <- "https://datadryad.org/downloads/file_stream/248659"
-#dest_file_1 <- file.path(data_path, "tpc119453_Supplemental_Data_Set_1.xlsx")
+#| label: getting-data
+# Pulls the data from the online source into _raw/
 
-Sys.setenv(DRYAD_API_TOKEN = "11EUwxIno8Baj36be8l496pgZbFotVXWgrrbcYo_-5g")
+## Creating directories if they don't exist
+raw_dir <- "../data/_raw/"
 
-my_doi <- "10.5061/dryad.4f7n5"
-#downloaded_files <- dryad_download(dois = my_doi)
-# 2. Extract the dataset metadata to find individual file IDs
-meta <- dryad_dataset(dois = my_doi)
+if( !dir.exists("../data/") ){
+  dir.create(path = "../data/")}
 
-# 3. Pull out the specific numeric file IDs from the metadata
-# (This extracts the IDs for all files attached to this specific dataset)
-file_ids <- meta[[1]]$links$`stash:files`
+if( !dir.exists(raw_dir) ){
+  dir.create(path = raw_dir)}
 
-# 4. Download each file one by one via its distinct ID
-# You can specify a local directory path if you want to save them outside your cache
-downloaded_paths <- dryad_files_download(ids = file_ids)
+## Defining what files to be extracted from zenodo
+files <- tibble(
+  name = c("tpc119453_Supplemental Data Set 1.xlsx",
+           "tpc119453_Supplemental Data Set 2.xlsx",
+           "tpc119453_Supplemental Data Set 3.xlsx",
+           "tpc119453_Supplemental Data Set 4.xlsx",
+           "tpc119453_Supplemental Data Set 5.xlsx",
+           "tpc119453_Supplemental Data Set 6.xlsx"),
+  url  = str_c("https://zenodo.org/records/4936221/files/",
+               URLencode(name), "?download=1")
+)
 
-# View where your files successfully saved on your network drive
-print(downloaded_paths)
+## The function that extracts each file and clean the name (to not have spaces)
+## Will not rerun if the files already exist
+get_file <- function(name, url) {
+  clean_name <- str_replace_all(name, " ", "_")
+  dest <- str_c(raw_dir, clean_name)
+  if (!file.exists(dest) || file.size(dest) < 10000) {
+    download.file(url, destfile = dest, mode = "wb")
+  }
+  dest
+}
+
+## Running the download
+paths <- map2_chr(files$name, files$url, get_file)
 ```
 
-#### Example of loading local file into .xlsx
+#### Loading the files into tibbles
 
 ```{r}
-tpc119453_Supplemental_Data_Set_5 <- read_excel(
-  "~/Projects/group_13_exam_project/data/_raw/tpc119453_Supplemental+Data+Set+5.xlsx",
-  sheet = "DataSet5A", skip = 6)
+Data_Set_1 <- read_excel(
+  here("data/_raw/tpc119453_Supplemental_Data_Set_1.xlsx"))
+
+Data_Set_2 <- read_excel(
+  here("data/_raw/tpc119453_Supplemental_Data_Set_2.xlsx"))
+
+Data_Set_3 <- read_excel(
+  here("data/_raw/tpc119453_Supplemental_Data_Set_3.xlsx"), sheet = "table")
 
 ```
