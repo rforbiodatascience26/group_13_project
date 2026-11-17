@@ -1,7 +1,9 @@
 ---
 title: "presentation group 13"
 Author: s194659 - Jakob-Ytte s224991 - s224991 s203517 - s203517 s215081 - MOrkild s215049 - Fredivildbasse
-format: revealjs
+format: 
+  revealjs:
+    theme: dark
 ---
 
 # Introduction
