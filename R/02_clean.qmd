@@ -16,19 +16,19 @@ library("here")
 
 ```{r}
 #| message: false
-Data_Set_1 <- read_excel(
+Data_set_1 <- read_excel(
   here("data/_raw/tpc119453_Supplemental_Data_Set_1.xlsx"))
 
-#Data_Set_2 <- read_excel(
+#Data_set_2 <- read_excel(
   #here("data/_raw/tpc119453_Supplemental_Data_Set_2.xlsx"))
 
-#Data_Set_3 <- read_excel(
+#Data_set_3 <- read_excel(
   #here("data/_raw/tpc119453_Supplemental_Data_Set_3.xlsx"), sheet = "table")
 
-#Data_Set_4 <- read_excel(
+#Data_set_4 <- read_excel(
   #here("data/_raw/tpc119453_Supplemental_Data_Set_4.xlsx"))
 
-#Data_Set_5 <- read_excel(
+#Data_set_5 <- read_excel(
   #here("data/_raw/tpc119453_Supplemental_Data_Set_5.xlsx"))
 ```
 
@@ -37,25 +37,25 @@ Data_Set_1 <- read_excel(
 ```{r}
 #| eval: false
 #| warning: false
-head(Data_Set_1, 10)
+head(Data_set_1, 10)
 
-#head(Data_Set_2, 10)
+#head(Data_set_2, 10)
 
-#head(Data_Set_3, 10)
+#head(Data_set_3, 10)
 
-#head(Data_Set_4, 10)
+#head(Data_set_4, 10)
 
-#head(Data_Set_5, 10)
+#head(Data_set_5, 10)
 ```
 
 #### Upon observing the excel file structure we can skip the some lines made for excel-visual-aid
 
 ```{r}
 #| message: false
-Data_Set_1 <- read_excel(
+Data_set_1 <- read_excel(
   here("data/_raw/tpc119453_Supplemental_Data_Set_1.xlsx"), skip = 9)
 
-#Data_Set_5 <- read_excel(
+#Data_set_5 <- read_excel(
   #here("data/_raw/tpc119453_Supplemental_Data_Set_5.xlsx"), skip = 5)
 ```
 
@@ -63,9 +63,9 @@ Data_Set_1 <- read_excel(
 
 ```{r}
 #| eval: false
-head(Data_Set_1, 10)
+head(Data_set_1, 10)
 
-# head(Data_Set_5, 10)
+# head(Data_set_5, 10)
 ```
 
 #### Make Data Set 1 Readable
@@ -107,7 +107,7 @@ genes <- tibble(Gene_ID =
                     "Solyc09g010210")
 )
 
-Data_Set1 <- Data_Set_1 |> 
+Data_set_1_clean <- Data_set_1 |> 
   
   # Find the first 8 columns and all coloumns of fold change
   select(matches("\\.\\.\\.[1-8]$"), starts_with("FC")) |>
@@ -142,15 +142,19 @@ Data_Set1 <- Data_Set_1 |>
   separate_wider_delim(c(AC_G, AC_P, TF18_P, TF18_G, rin_P, rin_G),  
                        delim = " ± ",
                        names = c("mean", "sd"),
-                       names_sep = "_")
-  
+                       names_sep = "_") |>
+ 
+   #Adding Gene_name coloumn to the end
+  mutate(
+    Gene_Name   = str_extract(Description, "\\(([^()]*)\\)\\s*$", group = 1),   #Finding the last parenthesis and extraction the text inside it to gene_name
+    Description = str_remove(Description, "\\s*\\([^()]*\\)\\s*$")              #Removes the gene name parenthesis from the description
+  )
 ```
 
 #### Save the workable files in data/ folder
 
 ```{r}
-write_csv(Data_Set1, file = "../data/data_set1.csv")
-# write_csv(Data_Set_5, file = "../data/data_set5.csv")
+write_csv(Data_set_1_clean, file = "../data/Data_set_1_clean.csv")
 
-Data_Set1 <- read_csv("../data/data_set1.csv", show_col_types = F)
+#Data_Set1 <- read_csv("../data/data_set_1_clean.csv", show_col_types = F)
 ```
