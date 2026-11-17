@@ -144,13 +144,6 @@ Data_Set1 <- Data_Set_1 |>
                        names = c("mean", "sd"),
                        names_sep = "_")
   
-Data_Set1 |>
-  separate_wider_delim(Description,
-                       delim = " (",
-                       names = c("Description", "Gene_Name"),
-                       too_few = "align_start",               #a description with no " (" keeps its text in Description, and Gene_Name becomes NA.
-                       too_many = "debug") |>
-  filter(!Description_ok)
 ```
 
 #### Save the workable files in data/ folder
