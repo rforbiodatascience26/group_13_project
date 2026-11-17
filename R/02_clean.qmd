@@ -94,13 +94,7 @@ Data_Set1 <- Data_Set1 |>
          "rin_P" = "P...8") |> 
   
   # set Gene_ID as a factor for later plotting
-  mutate(Gene_ID = as_factor(Gene_ID))
+  mutate(Gene_ID = as_factor(Gene_ID)) 
 ```
 
-#### Make Data Set 5 Readable
-
-```{r}
-Data_Set5 <- read_csv("../data/data_set5.csv", show_col_types = F)
-head(Data_Set5) |> 
-  rename("Description" = )
-```
+#### 
