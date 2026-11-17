@@ -1,11 +1,16 @@
 ---
-title: "presentation group 13"
-Author: s194659 - Jakob-Ytte s224991 - s224991 s203517 - s203517 s215081 - MOrkild s215049 - Fredivildbasse
-format: revealjs
+title: "Presentation Group 13"
+subtitle: "Jakob Sandfort Ytte (s194659), Freja Bonde Stürup (s203517), Alma Rosa Willumsen (s224991), Magnus Orkild (s215081) and Fredrik Lodberg Olsen (s215049)"
+format: 
+  revealjs:
+    theme: dark
+    slide-number: true
+    footer: "Group 13"
+
 ---
 
 # Introduction
-
+ 
 ## Data from article
 
 Transcriptional Regulation of Fruit Ripening by Tomato FRUITFULL Homologs and Associated MADS Box Proteins
