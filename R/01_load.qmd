@@ -8,6 +8,7 @@ format: html
 # Packages used should be installed before loading
 library("tidyverse")
 library("readxl")
+library("here")
 ```
 
 ```{r}
@@ -63,3 +64,19 @@ Data_Set_3 <- read_excel(
   here("data/_raw/tpc119453_Supplemental_Data_Set_3.xlsx"), sheet = "table")
 
 ```
+
+
+#### Upon observing the excel file structure we can skip the some lines made for excel-visual-aid 
+
+```{r}
+Data_Set_1 <- read_excel(
+  here("data/_raw/tpc119453_Supplemental_Data_Set_1.xlsx"), skip = 9)
+
+Data_Set_5 <- read_excel(
+  here("data/_raw/tpc119453_Supplemental_Data_Set_5.xlsx"), skip = 5)
+```
+
+```{r}
+Data_Set_5
+```
+
