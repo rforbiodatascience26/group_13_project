@@ -4,14 +4,15 @@ format: html
 ---
 # Packages used should be installed before loading
 library("tidyverse")
-library(readr)
+library("readr")
 library("tibble")
+library("heatmaply)
 #some packages might need to be removed bc it is mentioned already
 
 #load the data
-Data_For_Matrix <- read_csv("../data/data_set1.csv",
+Data_For_Matrix <- read_csv("../group_13_project/data/data_set1.csv",
                       show_col_types = FALSE)
-                      
+                     
 #write_csv(Data_set_1_clean, file = "../data/Data_set_1_clean.csv")
 #Data_Set1 <- read_csv("../data/data_set_1_clean.csv", show_col_types = F)
 
@@ -22,15 +23,30 @@ heatmap_data <- Data_For_Matrix |>
     `FC_AC(P/G)`,
     `FC_TF18(P/G)`,
     `FC_rin(P/G)`,
-    `FC_TF18_P/AC_P`,
-    `FC_rin_P/AC_P`,
-    `FC_TF18_G/AC_G`,
-    `FC_rin_G/AC_G`
+    `FC_TF18_P/AC_P)`,
+    `FC_rin_P/AC_P)`,
+    `FC_TF18_G/AC_G)`,
+    `FC_rin_G/AC_G)`
     )
     
-# heatmap 
+# convert data to matrix for heatmap 
 heatmap_matrix <- heatmap_data |>
   tibble::column_to_rownames("Gene_ID") |>
   as.matrix()
+  
+#after view(heatmap_matrix) the matrix looks good
+
+# Heatmap
+heatmap(
+  heatmap_matrix,
+  scale = "column",
+)
+
+heatmap_matrix |> 
+  count(color, cut) |>  
+  ggplot(aes(x = color, y = cut)) +
+  geom_tile(aes(fill = n))
+  )
+# dette er et mic af to metoder, den ene fra den hjemmeside jeg sendte og den anden bere basic heatmap fra vores undervisningsopgaver
   
 
