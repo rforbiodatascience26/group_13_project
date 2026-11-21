@@ -1,0 +1,36 @@
+---
+title: "04_Analysis"
+format: html
+---
+# Packages used should be installed before loading
+library("tidyverse")
+library(readr)
+library("tibble")
+#some packages might need to be removed bc it is mentioned already
+
+#load the data
+Data_For_Matrix <- read_csv("../data/data_set1.csv",
+                      show_col_types = FALSE)
+                      
+#write_csv(Data_set_1_clean, file = "../data/Data_set_1_clean.csv")
+#Data_Set1 <- read_csv("../data/data_set_1_clean.csv", show_col_types = F)
+
+#Selection of columns for matrix
+heatmap_data <- Data_For_Matrix |>
+  select(
+  Gene_ID,
+    `FC_AC(P/G)`,
+    `FC_TF18(P/G)`,
+    `FC_rin(P/G)`,
+    `FC_TF18_P/AC_P`,
+    `FC_rin_P/AC_P`,
+    `FC_TF18_G/AC_G`,
+    `FC_rin_G/AC_G`
+    )
+    
+# heatmap 
+heatmap_matrix <- heatmap_data |>
+  tibble::column_to_rownames("Gene_ID") |>
+  as.matrix()
+  
+
