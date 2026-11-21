@@ -1,0 +1,111 @@
+---
+title: "05_analysis_SubFig1"
+author: "Group 13"
+format: html
+editor: visual
+---
+
+```{r}
+library("readr")
+library("tidyverse")
+```
+
+```{r}
+#| fig-width: 8
+#| fig-height: 8
+#| dpi: 300
+
+# Define the exact display order of the 9 target genes (fills left-to-right, top-to-bottom)
+gene_order <- c("RIN", "FUL1", "FUL2", "ACS2", "ACS4", "PSY1", "PG2A", "CNR", "GRAS")
+
+Data_set_1_sf1 |> 
+  filter(Gene_Name %in% gene_order) |>   # Keep only the 9 genes needed for Figure 1A
+  mutate(Gene_Name = factor(Gene_Name, levels = gene_order)) |> # Makes sure the graphs are in the correct order
+
+  ggplot(aes(x = Condition, 
+             y = mean_norm, 
+             fill = Dataset)) + 
+  
+  geom_col(position = "dodge", width = 0.75) +
+  
+  scale_fill_manual(values = c("#4f81bd", 
+                               "#c0504d", 
+                               "#9bbb59")) +
+  
+  geom_linerange(
+    aes(ymin = mean_norm, 
+        ymax = mean_norm + sd_norm),
+    position = position_dodge(width = 0.75),
+    linewidth = 0.5) +
+  
+  geom_errorbar(
+    aes(ymin = mean_norm + sd_norm, 
+        ymax = mean_norm + sd_norm),
+    position = position_dodge(width = 0.75),
+    width = 0.3,
+    linewidth = 0.5,
+    color = "grey") +
+  
+  # Make the correct arrangement of the plots 3x3
+  facet_wrap(~ Gene_Name, ncol = 3, scales = "free_x") +
+  
+  # Setting the y-axis the same for all plots. Delete this if we dont want to do this 
+  scale_y_continuous(
+    limits = c(0, 4), # Determining the y-axis limits
+    breaks = 0:4, # show numbers 1 through 4 
+    labels = scales::label_number(accuracy = 0.1),
+    expand = c(0, 0)) + # No blank spaces outside the axes
+  
+ # Small vertical tick between G and P
+  annotate(
+    "segment",
+    x = 1.5, xend = 1.5,
+    y = 0, yend = -0.15,
+    colour = "gray",
+    linewidth = 0.5
+  ) +
+  
+  # Set the 0 to 4 view window here (instead of limits in scale_y_continuous) so yend = -0.15 isn't dropped
+  coord_cartesian(ylim = c(0, 4), clip = "off") +
+  
+  facet_wrap(~ Gene_Name, ncol = 3, scales = "free_x") +
+  
+  scale_y_continuous(
+    breaks = 0:4,
+    labels = scales::label_number(accuracy = 0.1),
+    expand = c(0, 0)
+  ) +
+  
+  labs(y = "Relative expression", x = NULL) + # Shared label
+  
+  theme_bw() + 
+  
+  theme(
+    aspect.ratio = 1, # Square plots
+    panel.spacing.x = unit(0.8, "lines"), # Horizontal spacing between columns
+    panel.spacing.y = unit(0.8, "lines"), # Vertical spacing between rows
+    strip.background = element_blank(), # Remove header from each individual plot
+    strip.text = element_text(size = 20, face = "italic", margin = margin(b = 3)),
+    strip.clip = "off", # Prevents overlap issues
+    
+    # Legend box styling
+    legend.position = "bottom", 
+    legend.title = element_blank(),
+    legend.text = element_text(size = 20),
+    legend.key.size = unit(0.45, "cm"),
+    legend.background = element_rect(colour = "black", fill = "white", linewidth = 0.4), 
+    
+    # Axis titles and tick labels
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(size = 20, face = "bold", margin = margin(r = 8)),
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.text.y = element_text(size = 12, color = "black"),
+    axis.ticks = element_blank(), # Hides small tick marks on axes
+    
+    # Gridlines and panel borders
+    panel.grid.major.x = element_blank(),# Removes vertical gridlines
+    panel.grid.minor = element_blank(), # Removes minor gridlines
+    panel.grid.major.y = element_line(colour = "gray", linewidth = 0.4), # Keeps horizontal gridlines
+    panel.border = element_rect(colour = "gray", fill = NA, linewidth = 1) # Border around each square
+  )
+```
