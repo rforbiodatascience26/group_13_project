@@ -121,15 +121,15 @@ Data_set_1_clean <- Data_set_1 |>
          "TF18_P" = 6,
          "rin_G" = 7,
          "rin_P" = 8,
-         "FC_AC(P/G)" = 9,
-         "FC_TF18(P/G)" = 10,
-         "FC_rin(P/G)" = 11,
-         "FC_TF18_P/AC_P)" = 12,
-         "FC_rin_P/AC_P)" = 13,
-         "FC_TF18_P/rin_P)" = 14,
-         "FC_TF18_G/AC_G)" = 15,
-         "FC_rin_G/AC_G)" = 16,
-         "FC_TF18_G/rin_G)" = 17,
+         "AC_P/AC_G" = 9,
+         "TF18_P/TF18_G" = 10,
+         "rin_P/rin_G" = 11,
+         "TF18_P/AC_P" = 12,
+         "rin_P/AC_P" = 13,
+         "TF18_P/rin_P" = 14,
+         "TF18_G/AC_G" = 15,
+         "rin_G/AC_G" = 16,
+         "TF18_G/rin_G" = 17,
          ) |>
   
   # set Gene_ID as a factor for later plotting
@@ -154,7 +154,7 @@ Data_set_1_clean <- Data_set_1 |>
 #### Save the workable files in data/ folder
 
 ```{r}
-write_csv(Data_set_1_clean, file = "../data/Data_set_1_clean.csv")
+write_rds(Data_set_1_clean, file = "../data/Data_set_1_clean.csv")
 
 #Data_Set1 <- read_csv("../data/data_set_1_clean.csv", show_col_types = F)
 ```

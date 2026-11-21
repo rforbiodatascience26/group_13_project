@@ -23,7 +23,7 @@ library("readxl")
 #| label: Load dataset
 #| message: false
 
-Data_set_1_clean <- read_csv("../data/Data_set_1_clean.csv")
+Data_set_1_clean <- read_rds("../data/Data_set_1_clean.csv")
 head(Data_set_1_clean)
 ```
 

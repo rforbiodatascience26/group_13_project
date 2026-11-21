@@ -2,22 +2,31 @@
 title: "04_Analysis"
 format: html
 ---
+```{r}
+#| label: loading packages
+#| message: false
+
+
 # Packages used should be installed before loading
 library("tidyverse")
 library("readr")
 library("tibble")
-library("heatmaply)
+library("heatmaply")
+library("cowplot")
+library("ggdendro")
 #some packages might need to be removed bc it is mentioned already
 
-#load the data
-Data_For_Matrix <- read_csv("../group_13_project/data/data_set1.csv",
-                      show_col_types = FALSE)
-                     
-#write_csv(Data_set_1_clean, file = "../data/Data_set_1_clean.csv")
-#Data_Set1 <- read_csv("../data/data_set_1_clean.csv", show_col_types = F)
+```
 
+```{r}
+#load the data
+Data_set_1_clean <- read_rds("../data/Data_set_1_clean.csv")
+
+```
+
+```{r}
 #Selection of columns for matrix
-heatmap_data <- Data_For_Matrix |>
+heatmap_data <- Data_set_1_clean |>
   select(
   Gene_ID,
     `FC_AC(P/G)`,
@@ -36,17 +45,203 @@ heatmap_matrix <- heatmap_data |>
   
 #after view(heatmap_matrix) the matrix looks good
 
+```
+
+```{r}
 # Heatmap
 heatmap(
   heatmap_matrix,
-  scale = "column",
+  scale = "column"
 )
 
-heatmap_matrix |> 
-  count(color, cut) |>  
-  ggplot(aes(x = color, y = cut)) +
-  geom_tile(aes(fill = n))
-  )
-# dette er et mic af to metoder, den ene fra den hjemmeside jeg sendte og den anden bere basic heatmap fra vores undervisningsopgaver
+```
+
+
+### Initial data filtering
+```{r}
+gene_order <- c(
+  "Solyc01g008710",
+  "Solyc03g111720",
+  "Solyc01g095080",
+  "Solyc05g050010",
+  "Solyc10g080210",
+  "Solyc02g036350",
+  "Solyc02g086930",
+  "Solyc02g077920",
+  "Solyc07g055920",
+  "Solyc03g114830",
+  "Solyc08g080640",
+  "Solyc05g012020",
+  "Solyc10g006880",
+  "Solyc10g047030",
+  "Solyc12g075440",
+  "Solyc03g044300",
+  "Solyc12g008840",
+  "Solyc01g009010",
+  "Solyc10g081650",
+  "Solyc09g089580",
+  "Solyc08g080090",
+  "Solyc07g049530",
+  "Solyc06g069430",
+  "Solyc04g079960",
+  "Solyc03g031860",
+  "Solyc12g098710",
+  "Solyc06g051800",
+  "Solyc01g006540",
+  "Solyc03g095900",
+  "Solyc03g089310",
+  "Solyc09g010210"
+)
+
+heatmap_df <- Data_set_1_clean |> 
+  select(
+  Gene_ID,
+  Gene_Name,
+    `AC_P/AC_G`,
+    `TF18_P/TF18_G`,
+    `rin_P/rin_G`,
+    `TF18_P/AC_P`,
+    `rin_P/AC_P`,
+    `TF18_G/AC_G`,
+    `rin_G/AC_G`
+    ) |> 
+  filter(Gene_ID %in% gene_order) |> # Only keep displayed genes
+  mutate(Gene_ID = factor(Gene_ID, levels = rev(gene_order))) # order based on gene_order
+```
+
+### Convert to Matrix
+```{r}
+# Convert to numeric matrix for clustering
+heatmap_mat <- heatmap_df |>
+  select(-Gene_Name) |>
+  column_to_rownames("Gene_ID") |>
+  as.matrix()
+
+# Hierarchical clustering of genes
+hc <- hclust(
+  dist(heatmap_mat, method = "euclidean"),
+  method = "complete"
+)
+```
+
+### Create Dendogram
+```{r}
+dhc <- as.dendrogram(hc)
+
+data <- dendro_data(dhc, type = "rectangle")
+
+p <- ggplot(segment(data)) + 
   
+  geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) + 
+  
+  coord_flip() + 
+  
+  scale_y_reverse(expand = expansion(mult = 0)) +
+  
+  theme_minimal() +
+  theme(plot.margin = margin(0, 0, 0, 0))
+
+p_dend <- p +
+      theme_dendro()
+```
+
+### Fetch Gene-ID and -Name for Sample Labels 
+
+```{r}
+gene_labels <- heatmap_df |>
+  
+  distinct(Gene_ID, Gene_Name) |>
+  
+  mutate(label = paste(Gene_ID, Gene_Name)) |>
+  
+  select(Gene_ID, label) |>
+  
+  deframe() # converts data frame to vector
+```
+
+
+```{r}
+cols_p <- colnames(heatmap_df[3:9])
+```
+
+
+### Create Heatmap
+```{r}
+p_heat <- heatmap_df |>
+  pivot_longer(
+    cols = -c(Gene_ID, Gene_Name),
+    names_to = "Fold_Changes",
+    values_to = "vals"
+  ) |> 
+  ggplot(aes(x = Fold_Changes, y = Gene_ID, fill = vals)) +
+  
+  geom_tile(colour = "grey80", linewidth = 0.2) +
+  
+  # Set colour gradient
+  scale_fill_gradient2(
+    low = "blue",
+    high = "red",
+    midpoint = 0,
+    limits = c(-10,10),
+    oob = scales::squish # set "out of boundary" values to be within the limits
+  ) +
+  
+  scale_x_discrete(position = "top", expand = c(0, 0), limits = cols_p) +
+  scale_y_discrete(position = "right", expand = c(0, 0), labels = gene_labels) +
+  
+  labs(x = NULL, fill = "Fold Change\n(log2)") +
+  
+  theme_minimal() +
+  theme(
+    # Remove grid
+    panel.grid = element_blank(),
+    
+    # Remove axis ticks 
+    axis.ticks = element_blank(),
+    
+    # Position x axis
+    axis.text.x.top = element_text(
+      angle = 90,
+      hjust = 0,
+      vjust = 0.5,
+      colour = "black",
+      face = "bold"
+    ),
+    
+    # Position y axis
+    axis.text.y.right = element_text(
+      size = 8,
+      colour = "black"
+    ),
+    
+    legend.position = "bottom",
+    
+    legend.frame = element_rect(color ="black"), #,plot.margin = margin(0, 0, 0, 0)
+    
+    plot.margin = margin(0, 0, 0, 0) # remove extra space around plot
+  )
+
+p_heat
+```
+
+### Combine the plots
+```{r}
+# Combine dendrogram and heatmap using patchwork
+
+p_combined <- (p_dend | p_heat ) +
+  plot_layout(widths = c(1, 5))
+p_combined
+```
+
+### Save the plot with proper height and width
+```{r}
+ggsave(
+  filename = "../heatmap.png",
+  plot = p_combined,
+  width = 6,
+  height = 12,
+  units = "in",
+  dpi = 300
+)
+```
 
