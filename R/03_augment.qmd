@@ -18,14 +18,14 @@ Data_set_1_sf1 <- Data_set_1_clean |>
   pivot_longer(
     cols = -Gene_Name,     #only gene name is to be kept the same, remaining are pivoted
     #.value names the columns mean and sd, and keeps the numerical value of each row
-    names_to = c("Dataset", "Condition", ".value"), 
+    names_to = c("Dataset", "Age", ".value"), 
     names_sep = "_"
   ) |> 
   #converts <chr> to <dbl> and removes ',' as thousands delimiter
   mutate(across(c(mean, sd), parse_number)) |>  
   group_by(Gene_Name) |>  
   mutate(
-   ref       = mean[Dataset == "AC" & Condition == "P"],
+   ref       = mean[Dataset == "AC" & Age == "P"],
    mean_norm = mean / ref,
    sd_norm   = sd / ref
   ) |> 
@@ -42,7 +42,7 @@ gene_id <- "CNR"
 
 Data_set_1_sf1 |> 
   filter(Gene_Name == gene_id) |> 
-  ggplot(aes(x = Condition,
+  ggplot(aes(x = Age,
              y = mean_norm,
              fill = Dataset)) + 
     
@@ -94,5 +94,34 @@ Data_set_1_sf1 |>
 #### Creating relative expression data from the RNA-seq experiment
 
 ```{r}
+Data_set_1_sf2 <- Data_set_1_clean |> 
+  select(15:24) |>       #select the FC data
+  relocate(Gene_Name) |> 
+  rename(
+    AC_PG     = `FC_AC(P/G)`, #
+    TF18_P_AC = `FC_TF18_P/AC_P)`, #
+    rin_P_AC  = `FC_rin_P/AC_P)`, #
+    TF18_G_AC = `FC_TF18_G/AC_G)`,#
+    rin_G_AC  = `FC_rin_G/AC_G)`#
+  ) |> 
+  mutate(
+    AC_P   = 1,
+    rin_P  = 2^rin_P_AC,
+    TF18_P = 2^TF18_P_AC,
+    AC_G   = 2^(-AC_PG),
+    rin_G  = 2^(rin_G_AC  - AC_PG),
+    TF18_G = 2^(TF18_G_AC - AC_PG)
+  ) |> 
+  select(Gene_Name, AC_G, AC_P, rin_G, rin_P, TF18_G, TF18_P) |> 
+  filter(Gene_Name %in% c("RIN","TDR4","FUL2","ACS2","ACS4","PSY1","PG2A","CNR","GRAS")) |> #missing GRAS
+  pivot_longer(-Gene_Name,
+               names_to = c("Genotype", "Age"),
+               names_sep = "_",
+               values_to = "RNA_seq")
 
+Data_set_1_sf2
+```
+
+```{r}
+# do inner_join with _sf1
 ```
