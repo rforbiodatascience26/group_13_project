@@ -29,7 +29,6 @@ With `slice_sample()` we can quickly get an overview of the data.
 #| warning: false
 
 head(Data_set_1, 10)
-
 ```
 
 Upon observing the excel file structure, we can skip some lines that originate from reading an Excel file with merged cells.
@@ -46,7 +45,6 @@ Visual check.
 #| eval: false
 
 head(Data_set_1, 10)
-
 ```
 
 #### Clean up
@@ -146,7 +144,7 @@ Data_set_1_clean <- Data_set_1 |>
 
 RNA_seq <- read.delim("../data/_raw/GSE49289_Fujisawa_etal_NGS_FULRNAi_RPKM.txt.gz", skip = 1, row.names = 1, check.names = FALSE)
 
-head(Data_set_1, 10)
+head(RNA_seq, 10)
 ```
 
 #### Cleaning RNA-seq data
@@ -163,6 +161,12 @@ RNA_clean <- RNA_seq |>
   pivot_wider(names_from = gene, values_from = rpkm) |>
   separate(sample_id, sep = " ", into = c("sample", "rep")) |>
   separate(sample, sep = "-", into = c("sample", "status"))
+```
+
+#### Inspecting changes
+
+```{r}
+head(RNA_clean, 10)
 ```
 
 ## Save the workable files in data/ folder
