@@ -1,0 +1,130 @@
+---
+title: "06_analysis_Subfig1B"
+format: html
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r}
+library("tidyverse")
+library("broom")      # devtools::install_github("tidymodels/broom")
+#library("cowplot")   # Not super needed
+```
+
+```{r}
+d <- read.delim("../data/_raw/GSE49289_Fujisawa_etal_NGS_FULRNAi_RPKM.txt.gz", skip = 1, row.names = 1, check.names = FALSE)
+```
+
+## Clean/tidy Data
+
+Making this data set tidy might seem a bit reversed because there are so
+many genes and only 9 samples. The data thereby is made extremely wide
+when converted into a tidy tibble. However this is needed in order to
+make the PCA analysis where each gene is a variable and the samples are
+observations. Furthermore we can in this way add the variable/coloumns
+of metadata of which sample we are working with (AC, TF18 or rin) and
+what their status where when taken (where they pink or green).
+
+```{r}
+# Making the data tidy with genes as rows and each sample as a coloumn
+
+# Transposing the data so the variables (genes) are coloumns and observations (samples) are rows
+d_tidy <- d |>
+  rownames_to_column("gene") |>    # Making a column of genes instead of just hvaing the rownames
+  pivot_longer(-gene, names_to = "sample_id", values_to = "rpkm") |> # Pivot everything but genes to longer (meaning all the samples)
+  pivot_wider(names_from = gene, values_from = rpkm) |>
+  separate(sample_id, sep = " ", into = c("sample", "rep")) |>
+  separate(sample, sep = "-", into = c("sample", "status"))
+```
+
+The data is now cleaned with each its variable as column and each
+observation as a row.
+
+## Augmentation..
+
+Some genes do not have any RPKM values and will therefore be dropped in
+this augment chunk. We also only choose numeric columns to not get the
+metadata into the analysis.
+
+```{r}
+
+# Scale data to unit variance
+pca_fit <- d_tidy |>
+  select(where(is.numeric)) |> # retain only numeric columns
+  select(where(~var(.x) > 0)) |> # retain only columns with values above 0, else scale is failing
+  mutate(across(where(is.numeric), ~ log2(.x + 1))) |> # adding log trasnformation to avoid skewed RPKM data
+  prcomp(scale. = TRUE) # do PCA on scaled data
+```
+
+## Plotting
+
+```{r}
+# Plot data in PC coordinates
+pca_fit |>
+  augment(d_tidy) |> # add original dataset back in to get the metadata
+  ggplot(aes(.fittedPC1, .fittedPC2, fill = status, shape = sample)) + 
+  geom_point(size = 3) +
+  scale_fill_manual(values = c(Green = "darkgreen", Pink = "hotpink"),
+                    guide = guide_legend(override.aes = list(shape = 21))) +
+  scale_shape_manual(values = c(AC = 21, rin = 22 , TF18 = 24)) +
+  theme_minimal(base_size = 12)
+```
+
+## Extra stuff that we could do
+
+Look at the rotation matrix
+
+```{r}
+# extract rotation matrix
+pca_fit |>
+  tidy(matrix = "rotation")
+```
+
+```{r}
+# define arrow style for plotting
+arrow_style <- arrow(
+  angle = 20, ends = "first", type = "closed", length = grid::unit(8, "pt")
+)
+
+# plot rotation matrix
+pca_fit |>
+  tidy(matrix = "rotation") |>
+  pivot_wider(names_from = "PC", names_prefix = "PC", values_from = "value") |>
+  ggplot(aes(PC1, PC2)) +
+  geom_segment(xend = 0, yend = 0, arrow = arrow_style) +
+  geom_text(
+    aes(label = column),
+    hjust = 1, nudge_x = -0.02, 
+    color = "#904C2F"
+  ) +
+  xlim(-1.25, .5) + ylim(-.5, 1) +
+  coord_fixed() + # fix aspect ratio to 1:1
+  theme_minimal_grid(12)
+```
+
+Look at the variance explained by each PC
+
+```{r}
+pca_fit %>%
+  tidy(matrix = "eigenvalues")
+```
+
+```{r}
+pca_fit |>
+  tidy(matrix = "eigenvalues") |>
+  ggplot(aes(PC, percent)) +
+  geom_col(fill = "#56B4E9", alpha = 0.8) +
+  scale_x_continuous(breaks = 1:9) +
+  scale_y_continuous(
+    labels = scales::percent_format(),
+    expand = expansion(mult = c(0, 0.01))
+  ) +
+  theme_minimal_hgrid(12)
+```
+
+PCA plot guide:
+<https://clauswilke.com/blog/2020/09/07/pca-tidyverse-style/>
+
+Supplementary data was accessed through this site:
+<https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi>

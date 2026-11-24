@@ -24,20 +24,20 @@ format:
 2.  **What do we need Figure 2 for??**:\
     Investigate the 
 
-3.  **Anything else?**:\
-    Determine which 
+3.  **PCA plot**:\
+    Determine the grouping of samples and the ripening stages
 :::
 
 
-
- 
 ## Materials: Data from article
 :::r-fit-text
 Transcriptional Regulation of Fruit Ripening by Tomato FRUITFULL Homologs and Associated MADS Box Proteins
 
-published 10th January 2014 by **Fujisawa et al. 2014**
+DOI: <https://doi.org/10.1105/tpc.113.119453>
 
-Insert picture off screenshot from website
+published by **Fujisawa et al. 2014**
+
+![](presentation_files/Data_Dryad.png){width="100%"}
 
 :::
 
@@ -53,8 +53,6 @@ Analysises used
 Heatmap 
 PCA 
 
-
-# Results
 
 ## Figure 1 - visualization of the expression patterns
 
@@ -94,5 +92,11 @@ Short text about the figures
 
 :::
 :::
+
+## Figure 3 - PCA Analysis
+
+
+![](../results/04_PCA){width="100%"}
+
 
 ## Discussion

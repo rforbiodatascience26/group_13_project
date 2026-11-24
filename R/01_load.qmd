@@ -3,12 +3,23 @@ title: "01_load.qmd"
 format: html
 ---
 
+This document loads the files and data needed to do the analysis performed in this project.
+
+## Load Packages
+
+This chunk loads the packages necessary to run the next chunk.
+
 ```{r}
 #| label: packages
 # Packages used should be installed before loading
-library("tidyverse")
-library("readxl")
+
+library("tidyverse")      # Used for the download function and mapping
+library("readxl")         # Used to read the excel files
 ```
+
+## Getting the Data
+
+The data is placed in excel files from zenodo.org. Each file is loaded into the data/\_raw in order to use it later in this project. During loading the names of each file is also cleaned for better readability. All files are loaded even though only supplemental data set 1 is used in later analysis. This enables getting an overview of all the data available.
 
 ```{r}
 #| label: getting-data
@@ -32,8 +43,8 @@ files <- tibble(
            "tpc119453_Supplemental Data Set 5.xlsx",
            "tpc119453_Supplemental Data Set 6.xlsx"),
   url  = str_c("https://zenodo.org/records/4936221/files/",
-               URLencode(name), # convert string to comply with URL format
-               "?download=1") # add query string to request download 
+               URLencode(name), # converting string to comply with URL format
+               "?download=1") # adding query string to request download 
 )
 
 ## The function that downloads each file and clean the name (to not have spaces)
@@ -45,13 +56,24 @@ get_file <- function(name, url) {
   # Create destination path for the file
   dest <- str_c(raw_dir, clean_name)
   
-  # Only run if file at destination doesn't exist or is smaller than 10k bytes
-  if (!file.exists(dest) || file.size(dest) < 10000) {
+  # Only run if file at destination doesn't exist
+  if (!file.exists(dest)) {
     download.file(url, destfile = dest, mode = "wb")
   }
   dest
 }
 
 ## Running the download
-paths <- map2_chr(files$name, files$url, get_file)
+paths <- map2_chr(files$name, files$url, get_file)  #mapping that uses two arguments for a function (and makes it into a character)
+```
+
+Additional data was imported from NCBI GEO (Genome Expression Omnibus). This data was not accessible at zenodo.org and thereby needed to be downloaded on it's own.
+
+```{r}
+# Downloading the zipped textfile from ncbi
+download.file(
+  url = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE49nnn/GSE49289/suppl/GSE49289_Fujisawa_etal_NGS_FULRNAi_RPKM.txt.gz",
+  destfile = "../data/_raw/GSE49289_Fujisawa_etal_NGS_FULRNAi_RPKM.txt.gz",
+  mode = "wb"
+)
 ```
