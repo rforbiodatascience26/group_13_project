@@ -30,7 +30,7 @@ library("readxl")
 #| label: Load dataset
 #| message: false
 
-Data_set_1_clean <- read_rds("../data/Data_set_1_clean.csv")
+Data_set_1_clean <- read_rds("../data/02_df1_clean.rds")
 head(Data_set_1_clean)
 ```
 
@@ -56,6 +56,13 @@ Data_set_1_sf1 <- Data_set_1_clean |>
 
 
 Data_set_1_sf1
+```
+
+#### Save the workable files in data/ folder
+
+```{r}
+# use rds to save data types 
+write_rds(Data_set_1_sf1, file = "../data/03_sf1_aug.rds")
 ```
 
 #### Example graph
