@@ -8,6 +8,8 @@ editor: visual
 ## Packages needed
 
 ```{r}
+#| label: loading packages05
+#| message: false
 library("readr")
 library("tidyverse")
 ```

@@ -3,18 +3,22 @@ title: "03_augment"
 format: html
 ---
 
+#### Loading packages
+
 ```{r}
-#| label: packages
+#| label: packages03
 #| message: false
 # Packages used should be installed before loading
 library("tidyverse")
 ```
 
-In order to reproduce the supplementary figure 1A, we must create normalized data according to the authors descriptions. The purpose of this figure is to check that the two seperate RNA analyses, quantitative reverse transcriptase PCR and RNA sequencing, are compatible, which is required to asses the transcriptome profile of the genotypes in the article.
+### Introduction
+
+In order to reproduce the supplementary figure 1A and 1B, we must create normalized data according to the authors descriptions. The purpose of this figure is to check that the two seperate RNA analyses, quantitative reverse transcriptase PCR and RNA sequencing, are compatible, which is required to asses the transcriptome profile of the genotypes in the article.
 
 According to the figure text in the 'Supplementary Table 1' ([link to zip file](https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/plcell/26/1/10.1105_tpc.113.119453/4/plcell_v26_1_89_s1.zip?Expires=1797371807&Signature=3BN0htJRMAATym2z08CPcXVMxuYvsSnkZsNURhndtgUOTyH7p~ZMPCHryFMQbh6D0FFbNpCs5IMmSkSP2QfCqHEyo95tK20eQ3Tmqi~ygJ42URncQo9-sN8jWQe9ln-3oojDYRZ0V9dtOSM2rFlfeGwoai15UGklX2UmItm0rpHsBmvIFID2dZPcR2zWWehQG4UB1GfNSSnCGneMn8rGFinTTgQNm9ib0ca9l2DT9Xlvf5t7w7HaHqz9VUncVV4HLdtd5~6X8XutM-7Dwvuny6ESP~BS76sSZnMESOVmwiHiTUKF2blhJOuixLS88IMN-VeSWBNBeNVK6qx00ryGbQ__&Key-Pair-Id=APKAIE5G5CRDK6RD3PGA)), the RPKM (reads per kilobase per million mapped reads) data must all be normalized such that the wild type expression after 45 days of growth (45 DAP or "P age") is equal to 1.
 
-#### Creating relative expression data from the qRT-PCR experiment
+#### Creating relative expression data from the qRT-PCR experiment (supp. 1a)
 
 As we are going to be working with this data separately in an analysis, we are going to create a new tibble, with the standardized columns, as opposed to adding it to the already cleaned data set.
 
@@ -26,15 +30,17 @@ library("tidyverse")
 library("readxl")
 ```
 
-#### Load data
+#### Load data from /data
 
 ```{r}
 #| label: Load dataset
 #| message: false
 
 Data_set_1_clean <- read_rds("../data/02_df1_clean.rds")
-head(Data_set_1_clean)
+slice_sample(Data_set_1_clean, n = 10)
 ```
+
+#### Augment with pivot_longer and mutate
 
 ```{r}
 Data_set_1_sf1 <- Data_set_1_clean |> 
@@ -87,7 +93,7 @@ Data_set_1_sf1 |>
   geom_linerange(
     aes(ymin = mean_norm, ymax = mean_norm + sd_norm),
     position = position_dodge(width = 0.8),
-    size = 0.8
+    linewidth = 0.8
   ) +
   # cap at the top only (ymin = ymax, so no vertical part is drawn)
   geom_errorbar(
@@ -123,7 +129,13 @@ Data_set_1_sf1 |>
   
 ```
 
-#### Creating relative expression data from the RNA-seq experiment
+#### Creating relative expression data from the RNA-seq experiment (supp. 1b)
+
+Some standardizations are done, according to those described in the figure text of supplementary figure 1.
+
+All the fold change values need to normalized to AC_P expression, which is set to 1. Therefore, all values that are already expressed as 'gene expression' / AC_P, only need to be raised as an exponent to 2, as they are log2 normalized.
+
+For those that are expressed in relation to the early growth measurement (G), the log2-normalized data must be raised to an exponent that includes the inverse ratio of the wild type: AC\_(P/G). By inverting this, we will obtain the gene expression values in relation go AC_P.
 
 ```{r}
 Data_set_1_FC <- Data_set_1_clean |> 
@@ -145,7 +157,8 @@ Data_set_1_FC <- Data_set_1_clean |>
     TF18_G = 2^(TF18_G_AC - AC_PG)
   ) |> 
   select(Gene_Name, AC_G, AC_P, rin_G, rin_P, TF18_G, TF18_P) |> 
-  filter(Gene_Name %in% c("RIN","TDR4","FUL2","ACS2","ACS4","PSY1","PG2A","CNR","GRAS")) |> #missing GRAS
+  filter(Gene_Name %in% #%in% checks all at the same time, irrespective of order
+           c("RIN","TDR4","FUL2","ACS2","ACS4","PSY1","PG2A","CNR","GRAS")) |>
   pivot_longer(-Gene_Name,
                names_to = c("Dataset", "Age"),
                names_sep = "_",
