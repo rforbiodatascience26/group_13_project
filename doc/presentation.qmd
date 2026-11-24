@@ -8,22 +8,44 @@ format:
     footer: "Group 13" #adds a footer on slides
 ---
 
-# Introduction
+
+## Introduction
+
+:::r-fit-text
+### **Aim**
+
+-   Identifying which genes are regulated by the tomato transcription factors FUL1 and FUL2 during fruit ripening.
+
+### Objectives
+
+1.  **Identify gene expression patterns**:\
+    Understand the 
+
+2.  **What do we need Figure 2 for??**:\
+    Investigate the 
+
+3.  **Anything else?**:\
+    Determine which 
+:::
+
+
+
  
-## Article
+## Materials: Data from article
+:::r-fit-text
 Transcriptional Regulation of Fruit Ripening by Tomato FRUITFULL Homologs and Associated MADS Box Proteins
 
-published 10th January 2014 by Fujisawa et al. 2014
+published 10th January 2014 by **Fujisawa et al. 2014**
 
-## Materials: Data from article
+Insert picture off screenshot from website
 
-which genes are regulated by the tomato transcription factors FUL1 and FUL2 during fruit ripening.
-
-# Methods and materials
+:::
 
 ## Methods used for modelling
 
-Methods: Which modelling did you use? Think of the methods section as a recipe for how to go from raw to results => Flow chart?
+Methods: Which modelling did you use? Think of the methods section as a recipe for how to go from raw to results
+
+=> **Flow chart**
 
 Data wrangling
 
@@ -57,7 +79,20 @@ PCA
 
 ## Figure 2
 
-![](../results/04_heatmap.png){width="100%"}
+Short text about the figures
 
+::: columns
+::: {.column width="50%"}
+
+![](../results/04_SubFig1A.png){width="100%"}
+
+:::
+
+::: {.column width="50%"}
+
+![](../results/04_SubFig1B.png){width="100%"}
+
+:::
+:::
 
 ## Discussion
