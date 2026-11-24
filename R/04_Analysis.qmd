@@ -205,7 +205,7 @@ p_combined
 ### Save the plot with proper height and width
 ```{r}
 ggsave(
-  filename = "../heatmap.png",
+  filename = "../results/04_heatmap.png",
   plot = p_combined,
   width = 6,
   height = 12,
