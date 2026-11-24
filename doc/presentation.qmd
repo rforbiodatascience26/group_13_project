@@ -1,28 +1,63 @@
 ---
 title: "Presentation Group 13"
-subtitle: "Jakob Sandfort Ytte (s194659), Freja Bonde Stürup (s203517), Alma Rosa Willumsen (s224991), Magnus Orkild (s215081) and Fredrik Lodberg Olsen (s215049)"
+subtitle: "Jakob Sandfort Ytte (s194659),Freja Bonde Stürup (s203517), Alma Rosa Willumsen (s224991), Magnus Orkild (s215081) and Fredrik Lodberg Olsen (s215049)"
 format: 
   revealjs:
     theme: dark
-    slide-number: true
-    footer: "Group 13"
-
+    slide-number: true #adds slide numbers
+    footer: "Group 13" #adds a footer on slides
 ---
 
 # Introduction
  
-## Data from article
-
+## Article
 Transcriptional Regulation of Fruit Ripening by Tomato FRUITFULL Homologs and Associated MADS Box Proteins
 
-published 10th January 2014
+published 10th January 2014 by Fujisawa et al. 2014
+
+## Materials: Data from article
+
+which genes are regulated by the tomato transcription factors FUL1 and FUL2 during fruit ripening.
 
 # Methods and materials
 
-## Data wrangling
+## Methods used for modelling
+
+Methods: Which modelling did you use? Think of the methods section as a recipe for how to go from raw to results => Flow chart?
+
+Data wrangling
+
+Analysises used
+Heatmap 
+PCA 
+
 
 # Results
 
-## Figure 1A
+## Figure 1 - visualization of the expression patterns
+
+::: columns
+::: {.column width="50%"}
+
+
+- Heatmap illustrate expression patterns, which genes are up- and down regulated.
+
+- Dendogram identify which genes have similar expression patterns
+
+
+:::
+
+::: {.column width="50%"}
+
+![](../results/04_heatmap.png){width="40%"}
+
+:::
+:::
+
+
+## Figure 2
+
+![](../results/04_heatmap.png){width="100%"}
+
 
 ## Discussion

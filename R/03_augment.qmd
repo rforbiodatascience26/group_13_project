@@ -26,6 +26,8 @@ library("tidyverse")
 library("readxl")
 ```
 
+#### Load data
+
 ```{r}
 #| label: Load dataset
 #| message: false
@@ -62,13 +64,13 @@ Data_set_1_sf1
 
 ```{r}
 # use rds to save data types 
-write_rds(Data_set_1_sf1, file = "../data/03_sf1_aug.rds")
+write_rds(Data_set_1_sf1, file = "../data/03_sf1a_aug.rds")
 ```
 
 #### Example graph
 
 ```{r}
-gene_id <- "CNR"
+gene_id <- "GRAS"
 
 Data_set_1_sf1 |> 
   filter(Gene_Name == gene_id) |> 
@@ -124,7 +126,7 @@ Data_set_1_sf1 |>
 #### Creating relative expression data from the RNA-seq experiment
 
 ```{r}
-Data_set_1_sf2 <- Data_set_1_clean |> 
+Data_set_1_FC <- Data_set_1_clean |> 
   select(15:24) |>       #select the FC data
   relocate(Gene_Name) |> 
   rename(                # Creating names that are easier to read
@@ -145,13 +147,28 @@ Data_set_1_sf2 <- Data_set_1_clean |>
   select(Gene_Name, AC_G, AC_P, rin_G, rin_P, TF18_G, TF18_P) |> 
   filter(Gene_Name %in% c("RIN","TDR4","FUL2","ACS2","ACS4","PSY1","PG2A","CNR","GRAS")) |> #missing GRAS
   pivot_longer(-Gene_Name,
-               names_to = c("Genotype", "Age"),
+               names_to = c("Dataset", "Age"),
                names_sep = "_",
                values_to = "RNA_seq_FC")
+
+Data_set_1_FC
+```
+
+To make the supplementary figure 1b, we need to join the data of the current two files: `Data_set_1_sf1` and `Data_set_1_FC`, as the y-values of the plot are the mean values from supplementary figure 1a, and the x-values are those that were normalized above. The joined data set will be named `Data_set_1_sf2`.
+
+`Data_set_1_FC` have been filtered to include only those genes that are visualized in supplementary figure 1a, to allow this join. We only want to append values from `_sf1` to this new data set, and we can therefore do an inner_join from the dplyr package.
+
+```{r}
+Data_set_1_sf2 <- inner_join(Data_set_1_FC, Data_set_1_sf1, join_by("Gene_Name", "Dataset", "Age")) |> 
+  select(Gene_Name, RNA_seq_FC, mean_norm)
 
 Data_set_1_sf2
 ```
 
+#### Save the workable files in data/ folder
+
 ```{r}
-# do inner_join with _sf1
+write_rds(Data_set_1_sf2, file = "../data/03_sf1b_aug.rds")
 ```
+
+#### 

@@ -73,7 +73,7 @@ head(Data_set_1, 10)
 ```{r}
 # Make a tibble of the desired gene IDs for semi_join
 genes <- tibble(Gene_ID =
-                  c("Solyc05g053090",
+                  c("Solyc07g052960",
                     "Solyc01g008710",
                     "Solyc03g111720",
                     "Solyc01g095080",
@@ -149,8 +149,10 @@ Data_set_1_clean <- Data_set_1 |>
     Gene_Name   = str_extract(Description, "\\(([^()]*)\\)\\s*$", group = 1),   #Finding the last parenthesis and extraction the text inside it to gene_name
     Description = str_remove(Description, "\\s*\\([^()]*\\)\\s*$")              #Removes the gene name parenthesis from the description
   ) |> 
-  # manually extract the last gene name, that does not follow the regex above
-  mutate(Gene_Name = if_else(str_detect(Description, "\\bGRAS\\b"), "GRAS", Gene_Name))
+  # manually extract the last two gene name, that are different in plots
+  mutate(Gene_Name = if_else(str_detect(Description, "\\bGRAS\\b"), "GRAS", Gene_Name)) |> 
+  mutate(Gene_Name = if_else(str_detect(Gene_Name, "\\bTomLoxC\\b"), "LoxC", Gene_Name)) |> 
+  mutate(Gene_Name = if_else(str_detect(Gene_Name, "\\bTDR4\\b"), "FUL1", Gene_Name))
 ```
 
 #### Save the workable files in data/ folder
