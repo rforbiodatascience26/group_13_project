@@ -10,7 +10,7 @@ This document loads the files and data needed to do the analysis performed in th
 This chunk loads the packages necessary to run the next chunk.
 
 ```{r}
-#| label: packages
+#| label: packages01
 # Packages used should be installed before loading
 
 library("tidyverse")      # Used for the download function and mapping

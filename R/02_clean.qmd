@@ -6,7 +6,7 @@ format: html
 #### Loading packages
 
 ```{r}
-#| label: packages
+#| label: packages02
 #| message: false
 # Packages used should be installed before loading
 library("tidyverse")
