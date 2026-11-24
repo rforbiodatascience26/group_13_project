@@ -20,7 +20,7 @@ library("ggdendro")
 
 ```{r}
 #load the data
-Data_set_1_clean <- read_rds("../data/Data_set_1_clean.csv")
+Data_set_1_clean <- read_rds("../data/02_df1_clean.csv")
 
 ```
 
