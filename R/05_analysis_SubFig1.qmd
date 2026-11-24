@@ -5,16 +5,24 @@ format: html
 editor: visual
 ---
 
+## Packages needed
+
 ```{r}
 library("readr")
 library("tidyverse")
 ```
 
+## Sub Figure 1A
+
+### Load data for Sub figure 1A
+
 ```{r}
 #load the data
-Data_set_1_clean <- read_rds("../data/02_df1_clean.rds")
+data_subfig1A <- read_rds("../data/03_sf1a_aug.rds")
 
 ```
+
+### Generate plot for sub figure 1A
 
 ```{r}
 #| fig-width: 8
@@ -25,7 +33,7 @@ Data_set_1_clean <- read_rds("../data/02_df1_clean.rds")
 gene_order <- c("RIN", "TDR4", "FUL2", "ACS2", "ACS4", "PSY1", "PG2A", "CNR", "GRAS")
 gene_labels <- c("RIN (rin)", "FUL1", "FUL2", "ACS2", "ACS4", "PSY1", "PG2A", "CNR", "GRAS")
 
-SubFig1A_plot <- Data_set_1_sf1 |> 
+SubFig1A_plot <- data_subfig1A |> 
   filter(Gene_Name %in% gene_order) |>   # Keep only the 9 genes needed for Figure 1A
   mutate(Gene_Name = factor(Gene_Name, levels = gene_order, labels = gene_labels)) |> # Makes sure the graphs are in the correct order
 
@@ -75,11 +83,11 @@ SubFig1A_plot <- Data_set_1_sf1 |>
     expand = c(0, 0)
   ) +
   
-  
   facet_wrap(~ Gene_Name, ncol = 3, scales = "free_x") +
   
   
-  labs(y = "Relative expression", x = NULL) + # Shared label
+  labs(y = "Relative expression",  # Shared label
+       x = NULL) +
   
   theme_bw() + 
   
@@ -112,6 +120,7 @@ SubFig1A_plot <- Data_set_1_sf1 |>
     panel.border = element_rect(colour = "gray", fill = NA, linewidth = 1) # Border around each square
   )
 
+# Save the file for results
 ggsave(
   filename = "../results/04_SubFig1A.png",
   plot = SubFig1A_plot,
@@ -122,4 +131,96 @@ ggsave(
 )
 
 SubFig1A_plot
+```
+
+## Sub Figure 1B
+
+### Load data for sub figure 1B
+
+```{r}
+#load the data
+data_subfig1B <- read_rds("../data/03_sf1b_aug.rds")
+
+```
+
+```{r}
+# Defining the equation and the R^2 value of the linear fit for later
+fit <- lm(mean_norm ~ RNA_seq_FC, data = data_subfig1B)
+
+intercept <- round(coef(fit)[1], 3)
+slope <- round(coef(fit)[2], 3)
+r2 <- round(summary(fit)$r.squared, 3)
+
+# Build the formatted label string (handles + or - sign automatically)
+sign_str <- if_else(intercept >= 0, "+", "-")
+eq_line  <- str_glue("bold('y = {slope}x {sign_str} {abs(intercept)}')")
+r2_line  <- str_glue("bold('R'^2*' = {r2}')")
+
+# Plotting
+subfig1B_plot <- data_subfig1B %>% 
+  ggplot(aes( x = RNA_seq_FC,
+              y = mean_norm))+
+  
+  # Diamond shapes for points
+  geom_point(shape = 18, size = 2, color = "black")+
+  
+  geom_smooth(method = lm, 
+              formula = y ~x, 
+              linetype = "11", 
+              linewidth = 0.9, 
+              color = "black", 
+              se = FALSE)+
+  
+  # Inserting the equation and R^2 in the plot
+  annotate(
+    "text",
+    x = 0.8, y = 2.5,
+    label = eq_line,
+    parse = TRUE,
+    size = 5.5
+  ) +
+  annotate(
+    "text",
+    x = 0.8, y = 2.2,
+    label = r2_line,
+    parse = TRUE,
+    size = 5.5
+  ) +
+  
+  labs(x = "Relative expression in RNA-seq", 
+       y = "Relative expression in qRT-PCR")+
+  
+  # Make the plot start in (0,0)
+  scale_y_continuous(
+    expand = c(0,0)
+  )+
+  
+  scale_x_continuous(
+    expand = c(0,0)
+  )+
+  
+  theme_minimal()+
+  
+  #Formatting the plot to look like the original
+  theme(
+    aspect.ratio = 1, # Square plot
+    axis.title.x = element_text(size = 14, face = "bold"),
+    axis.title.y = element_text(size = 14, face = "bold"),
+    axis.text.x = element_text(size = 14, face = "bold", color = "black"),
+    axis.text.y = element_text(size = 14, face = "bold", color = "black"),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)
+  )
+
+# Save the file for results
+ggsave(
+  filename = "../results/04_SubFig1B.png",
+  plot = subfig1B_plot,
+  width = 8,
+  height = 8,
+  units = "in",
+  dpi = 300
+)
+
+subfig1B_plot
 ```
