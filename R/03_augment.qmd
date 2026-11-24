@@ -26,6 +26,8 @@ library("tidyverse")
 library("readxl")
 ```
 
+#### Load data
+
 ```{r}
 #| label: Load dataset
 #| message: false
@@ -68,7 +70,7 @@ write_rds(Data_set_1_sf1, file = "../data/03_sf1_aug.rds")
 #### Example graph
 
 ```{r}
-gene_id <- "CNR"
+gene_id <- "GRAS"
 
 Data_set_1_sf1 |> 
   filter(Gene_Name == gene_id) |> 
