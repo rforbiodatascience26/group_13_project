@@ -124,12 +124,12 @@ Data_set_1_clean <- Data_set_1 |>
          "FC_AC(P/G)" = 9,
          "FC_TF18(P/G)" = 10,
          "FC_rin(P/G)" = 11,
-         "FC_TF18_P/AC_P)" = 12,
-         "FC_rin_P/AC_P)" = 13,
-         "FC_TF18_P/rin_P)" = 14,
-         "FC_TF18_G/AC_G)" = 15,
-         "FC_rin_G/AC_G)" = 16,
-         "FC_TF18_G/rin_G)" = 17,
+         "FC_TF18_P/AC_P" = 12,
+         "FC_rin_P/AC_P" = 13,
+         "FC_TF18_P/rin_P" = 14,
+         "FC_TF18_G/AC_G" = 15,
+         "FC_rin_G/AC_G" = 16,
+         "FC_TF18_G/rin_G" = 17,
          ) |>
   
   # set Gene_ID as a factor for later plotting
