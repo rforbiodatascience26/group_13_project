@@ -3,6 +3,8 @@ title: "02_clean"
 format: html
 ---
 
+#### Loading packages
+
 ```{r}
 #| label: packages
 #| message: false
@@ -12,7 +14,7 @@ library("readxl")
 library("here")
 ```
 
-#### Loading the files into tibbles
+#### Loading the data
 
 ```{r}
 #| message: false
@@ -32,23 +34,23 @@ Data_set_1 <- read_excel(
   #here("data/_raw/tpc119453_Supplemental_Data_Set_5.xlsx"))
 ```
 
-#### Inspection step for logical loading and subsequent saving
+With `slice_sample()` we can quickly get an overview of the data.
 
 ```{r}
 #| eval: false
 #| warning: false
-head(Data_set_1, 10)
+slice_sample(Data_set_1, n = 10)
 
-#head(Data_set_2, 10)
+#slice_sample(Data_set_2, n = 10)
 
-#head(Data_set_3, 10)
+#slice_sample(Data_set_3, n = 10)
 
-#head(Data_set_4, 10)
+#slice_sample(Data_set_4, n = 10)
 
-#head(Data_set_5, 10)
+#slice_sample(Data_set_1, n = 10)
 ```
 
-#### Upon observing the excel file structure we can skip the some lines made for excel-visual-aid
+Upon observing the excel file structure, we can skip some lines that originate from reading an Excel file with merged cells.
 
 ```{r}
 #| message: false
@@ -59,16 +61,15 @@ Data_set_1 <- read_excel(
   #here("data/_raw/tpc119453_Supplemental_Data_Set_5.xlsx"), skip = 5)
 ```
 
-#### Look at the structure for sanity check
+Visual check.
 
 ```{r}
 #| eval: false
-head(Data_set_1, 10)
+slice_sample(Data_set_1, n = 10)
 
-# head(Data_set_5, 10)
 ```
 
-#### Make Data Set 1 Readable
+#### Clean up
 
 ```{r}
 # Make a tibble of the desired gene IDs for semi_join
@@ -152,7 +153,7 @@ Data_set_1_clean <- Data_set_1 |>
   # manually extract the last two gene name, that are different in plots
   mutate(Gene_Name = if_else(str_detect(Description, "\\bGRAS\\b"), "GRAS", Gene_Name)) |> 
   mutate(Gene_Name = if_else(str_detect(Gene_Name, "\\bTomLoxC\\b"), "LoxC", Gene_Name)) |> 
-  mutate(Gene_Name = if_else(str_detect(Gene_Name, "\\bTDR4\\b"), "FUL1", Gene_Name))
+  mutate(Gene_Name = if_else(str_detect(Gene_Name, "\\bTDR4\\b"), "FUL1<", Gene_Name))
 ```
 
 #### Save the workable files in data/ folder
