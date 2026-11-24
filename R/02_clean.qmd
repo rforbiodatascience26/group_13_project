@@ -148,14 +148,16 @@ Data_set_1_clean <- Data_set_1 |>
   mutate(
     Gene_Name   = str_extract(Description, "\\(([^()]*)\\)\\s*$", group = 1),   #Finding the last parenthesis and extraction the text inside it to gene_name
     Description = str_remove(Description, "\\s*\\([^()]*\\)\\s*$")              #Removes the gene name parenthesis from the description
-  )
+  ) |> 
+  # manually extract the last gene name, that does not follow the regex above
+  mutate(Gene_Name = if_else(str_detect(Description, "\\bGRAS\\b"), "GRAS", Gene_Name))
 ```
 
 #### Save the workable files in data/ folder
 
 ```{r}
 # use rds to save data types
-write_rds(Data_set_1_clean, file = "../data/02_df1_clean.csv")
+write_rds(Data_set_1_clean, file = "../data/02_df1_clean.rds")
 
 #Data_Set1 <- read_csv("../data/data_set_1_clean.csv", show_col_types = F)
 ```
