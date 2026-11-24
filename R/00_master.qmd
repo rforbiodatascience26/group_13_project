@@ -1,0 +1,42 @@
+---
+title: "Master"
+author: "Group 13"
+format:
+  html:
+    embed-resources: true
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+execute:
+  echo: true
+  eval: true
+---
+
+```{r}
+#| include: false
+options(bitmapType = "cairo")
+```
+
+# 1. Load Data
+
+{{< include 01_load.qmd >}}
+
+# 2. Clean Data
+
+{{< include 02_clean.qmd >}}
+
+# 3. Augment Data
+
+{{< include 03_augment.qmd >}}
+
+# 4. Analysis
+
+{{< include 04_Analysis.qmd >}}
+
+# 5. Subfigure 1A
+
+{{< include 05_analysis_SubFig1.qmd >}}
+
+# 6. Subfigure 1B
+
+{{< include 06_analysis_Subfig1B.qmd >}}
