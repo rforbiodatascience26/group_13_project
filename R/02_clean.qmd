@@ -73,7 +73,7 @@ head(Data_set_1, 10)
 ```{r}
 # Make a tibble of the desired gene IDs for semi_join
 genes <- tibble(Gene_ID =
-                  c("Solyc05g053090",
+                  c("Solyc07g052960",
                     "Solyc01g008710",
                     "Solyc03g111720",
                     "Solyc01g095080",
