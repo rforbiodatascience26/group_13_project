@@ -2,8 +2,9 @@
 title: "04_Analysis"
 format: html
 ---
+
 ```{r}
-#| label: loading packages
+#| label: loading packages04
 #| message: false
 
 library("tidyverse")
@@ -19,8 +20,8 @@ Data_set_1_clean <- read_rds("../data/02_df1_clean.rds")
 
 ```
 
-
 ### Initial data filtering
+
 ```{r}
 gene_order <- c(
   "Solyc01g008710",
@@ -81,6 +82,7 @@ heatmap_df <- Data_set_1_clean |>
 ```
 
 ### Convert to Matrix
+
 ```{r}
 # Convert to numeric matrix for clustering
 heatmap_mat <- heatmap_df |>
@@ -96,6 +98,7 @@ hc <- hclust(
 ```
 
 ### Create Dendogram
+
 ```{r}
 dhc <- as.dendrogram(hc)
 
@@ -118,7 +121,7 @@ p_dend <- p +
       theme_dendro()
 ```
 
-### Fetch Gene-ID and -Name for Sample Labels 
+### Fetch Gene-ID and -Name for Sample Labels
 
 ```{r}
 gene_labels <- heatmap_df |>
@@ -132,13 +135,12 @@ gene_labels <- heatmap_df |>
   deframe() # converts data frame to vector
 ```
 
-
 ```{r}
 cols_p <- colnames(heatmap_df[3:9])
 ```
 
-
 ### Create Heatmap
+
 ```{r}
 p_heat <- heatmap_df |>
   pivot_longer(
@@ -217,6 +219,7 @@ p_heat
 ```
 
 ### Combine the dendrogram and heatmap using patchwork
+
 ```{r}
 #| message: false
 
@@ -235,8 +238,8 @@ p_combined <- p_dend + p_heat  +
 p_combined
 ```
 
-
 ### Save the plot with proper height and width
+
 ```{r}
 ggsave(
   filename = "../results/04_heatmap.png",
@@ -247,4 +250,3 @@ ggsave(
   dpi = 300
 )
 ```
-
