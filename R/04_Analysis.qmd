@@ -53,7 +53,7 @@ gene_order <- c(
   "Solyc06g051800",
   "Solyc01g006540",
   "Solyc03g095900",
-  "Solyc03g089310",
+  "Solyc03g083910",
   "Solyc09g010210"
 )
 
