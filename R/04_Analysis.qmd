@@ -6,53 +6,15 @@ format: html
 #| label: loading packages
 #| message: false
 
-
-# Packages used should be installed before loading
 library("tidyverse")
-library("readr")
-library("tibble")
-library("heatmaply")
-library("cowplot")
 library("ggdendro")
-#some packages might need to be removed bc it is mentioned already
+library("patchwork")
 
 ```
 
 ```{r}
 #load the data
-Data_set_1_clean <- read_rds("../data/02_df1_clean.csv")
-
-```
-
-```{r}
-#Selection of columns for matrix
-heatmap_data <- Data_set_1_clean |>
-  select(
-  Gene_ID,
-    `FC_AC(P/G)`,
-    `FC_TF18(P/G)`,
-    `FC_rin(P/G)`,
-    `FC_TF18_P/AC_P)`,
-    `FC_rin_P/AC_P)`,
-    `FC_TF18_G/AC_G)`,
-    `FC_rin_G/AC_G)`
-    )
-    
-# convert data to matrix for heatmap 
-heatmap_matrix <- heatmap_data |>
-  tibble::column_to_rownames("Gene_ID") |>
-  as.matrix()
-  
-#after view(heatmap_matrix) the matrix looks good
-
-```
-
-```{r}
-# Heatmap
-heatmap(
-  heatmap_matrix,
-  scale = "column"
-)
+Data_set_1_clean <- read_rds("../data/02_df1_clean.rds")
 
 ```
 
@@ -93,37 +55,25 @@ gene_order <- c(
   "Solyc09g010210"
 )
 
-# rename("Gene_ID" = 1,
-#          "Description" = 2,
-#          "AC_G" = 3,
-#          "AC_P" = 4,
-#          "TF18_G" = 5,
-#          "TF18_P" = 6,
-#          "rin_G" = 7,
-#          "rin_P" = 8,
-#          "AC_P/AC_G" = 9,
-#          "TF18_P/TF18_G" = 10,
-#          "rin_P/rin_G" = 11,
-#          "TF18_P/AC_P" = 12,
-#          "rin_P/AC_P" = 13,
-#          "TF18_P/rin_P" = 14,
-#          "TF18_G/AC_G" = 15,
-#          "rin_G/AC_G" = 16,
-#          "TF18_G/rin_G" = 17,
-#          )
-
-heatmap_df <- Data_set_1_clean |> 
+#Selection of columns for matrix
+heatmap_df <- Data_set_1_clean |>
   select(
-  Gene_ID,
-  Gene_Name,
-    `AC_P/AC_G`,
-    `TF18_P/TF18_G`,
-    `rin_P/rin_G`,
-    `TF18_P/AC_P`,
-    `rin_P/AC_P`,
-    `TF18_G/AC_G`,
-    `rin_G/AC_G`
+  Gene_ID, Gene_Name,
+    `FC_AC(P/G)`,
+    `FC_TF18(P/G)`,
+    `FC_rin(P/G)`,
+    `FC_TF18_P/AC_P`,
+    `FC_rin_P/AC_P`,
+    `FC_TF18_G/AC_G`,
+    `FC_rin_G/AC_G`
     ) |> 
+  rename("AC_P/AC_G" = 3,
+         "TF18_P/TF18_G" = 4,
+         "rin_P/rin_G" = 5,
+         "TF18_P/AC_P" = 6,
+         "rin_P/AC_P" = 7,
+         "TF18_G/AC_G" = 8,
+         "rin_G/AC_G" = 9) |> 
   filter(Gene_ID %in% gene_order) |> # Only keep displayed genes
   mutate(Gene_ID = factor(Gene_ID, levels = rev(gene_order))) # order based on gene_order
 ```
