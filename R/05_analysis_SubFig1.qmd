@@ -11,6 +11,12 @@ library("tidyverse")
 ```
 
 ```{r}
+#load the data
+Data_set_1_clean <- read_rds("../data/02_df1_clean.rds")
+
+```
+
+```{r}
 #| fig-width: 8
 #| fig-height: 8
 #| dpi: 300
@@ -19,7 +25,7 @@ library("tidyverse")
 gene_order <- c("RIN", "TDR4", "FUL2", "ACS2", "ACS4", "PSY1", "PG2A", "CNR", "GRAS")
 gene_labels <- c("RIN (rin)", "FUL1", "FUL2", "ACS2", "ACS4", "PSY1", "PG2A", "CNR", "GRAS")
 
-Data_set_1_sf1 |> 
+SubFig1A_plot <- Data_set_1_sf1 |> 
   filter(Gene_Name %in% gene_order) |>   # Keep only the 9 genes needed for Figure 1A
   mutate(Gene_Name = factor(Gene_Name, levels = gene_order, labels = gene_labels)) |> # Makes sure the graphs are in the correct order
 
@@ -59,6 +65,17 @@ Data_set_1_sf1 |>
     linewidth = 0.5
   ) +
   
+  # Sets the y-axis window from 0 to 4 without cutting off the tick at yend = -0.15
+  coord_cartesian(ylim = c(0, 4), clip = "off") +
+  
+  # Controls the y-axis tick numbers (0.0, 1.0, 2.0, 3.0, 4.0)
+  scale_y_continuous(
+    breaks = 0:4,
+    labels = scales::label_number(accuracy = 0.1),
+    expand = c(0, 0)
+  ) +
+  
+  
   facet_wrap(~ Gene_Name, ncol = 3, scales = "free_x") +
   
   
@@ -71,7 +88,7 @@ Data_set_1_sf1 |>
     panel.spacing.x = unit(0.8, "lines"), # Horizontal spacing between columns
     panel.spacing.y = unit(0.8, "lines"), # Vertical spacing between rows
     strip.background = element_blank(), # Remove header from each individual plot
-    strip.text = element_text(size = 20, face = "italic", margin = margin(b = 3)),
+    strip.text = element_text(size = 20, face = "bold.italic", margin = margin(b = 3)),
     strip.clip = "off", # Prevents overlap issues
     
     # Legend box styling
@@ -94,15 +111,15 @@ Data_set_1_sf1 |>
     panel.grid.major.y = element_line(colour = "gray", linewidth = 0.4), # Keeps horizontal gridlines
     panel.border = element_rect(colour = "gray", fill = NA, linewidth = 1) # Border around each square
   )
-```
 
-```{r}
-  
-  # Setting the y-axis the same for all plots. Delete this if we dont want to do this 
-  scale_y_continuous(
-    limits = c(0, 4), # Determining the y-axis limits
-    breaks = 0:4, # show numbers 1 through 4 
-    labels = scales::label_number(accuracy = 0.1),
-    expand = c(0, 0)) + # No blank spaces outside the axes
-  
+ggsave(
+  filename = "../results/04_SubFig1A.png",
+  plot = SubFig1A_plot,
+  width = 8,
+  height = 8,
+  units = "in",
+  dpi = 300
+)
+
+SubFig1A_plot
 ```
