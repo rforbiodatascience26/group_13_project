@@ -3,6 +3,8 @@ title: "02_clean"
 format: html
 ---
 
+## Loading required packages
+
 ```{r}
 #| label: packages
 #| message: false
@@ -12,24 +14,14 @@ library("readxl")
 library("here")
 ```
 
-#### Loading the files into tibbles
+## Data set 1
+
+#### Loading the file into a tibble
 
 ```{r}
 #| message: false
 Data_set_1 <- read_excel(
   here("data/_raw/tpc119453_Supplemental_Data_Set_1.xlsx"))
-
-#Data_set_2 <- read_excel(
-  #here("data/_raw/tpc119453_Supplemental_Data_Set_2.xlsx"))
-
-#Data_set_3 <- read_excel(
-  #here("data/_raw/tpc119453_Supplemental_Data_Set_3.xlsx"), sheet = "table")
-
-#Data_set_4 <- read_excel(
-  #here("data/_raw/tpc119453_Supplemental_Data_Set_4.xlsx"))
-
-#Data_set_5 <- read_excel(
-  #here("data/_raw/tpc119453_Supplemental_Data_Set_5.xlsx"))
 ```
 
 #### Inspection step for logical loading and subsequent saving
@@ -38,14 +30,6 @@ Data_set_1 <- read_excel(
 #| eval: false
 #| warning: false
 head(Data_set_1, 10)
-
-#head(Data_set_2, 10)
-
-#head(Data_set_3, 10)
-
-#head(Data_set_4, 10)
-
-#head(Data_set_5, 10)
 ```
 
 #### Upon observing the excel file structure we can skip the some lines made for excel-visual-aid
@@ -54,9 +38,6 @@ head(Data_set_1, 10)
 #| message: false
 Data_set_1 <- read_excel(
   here("data/_raw/tpc119453_Supplemental_Data_Set_1.xlsx"), skip = 9)
-
-#Data_set_5 <- read_excel(
-  #here("data/_raw/tpc119453_Supplemental_Data_Set_5.xlsx"), skip = 5)
 ```
 
 #### Look at the structure for sanity check
@@ -64,8 +45,6 @@ Data_set_1 <- read_excel(
 ```{r}
 #| eval: false
 head(Data_set_1, 10)
-
-# head(Data_set_5, 10)
 ```
 
 #### Make Data Set 1 Readable
@@ -155,11 +134,39 @@ Data_set_1_clean <- Data_set_1 |>
   mutate(Gene_Name = if_else(str_detect(Gene_Name, "\\bTDR4\\b"), "FUL1", Gene_Name))
 ```
 
-#### Save the workable files in data/ folder
+## RNA-seq Data
+
+#### Loading and inspecting file
+
+```{r}
+#| eval: false
+#| warning: false
+
+RNA_seq <- read.delim("../data/_raw/GSE49289_Fujisawa_etal_NGS_FULRNAi_RPKM.txt.gz", skip = 1, row.names = 1, check.names = FALSE)
+
+head(Data_set_1, 10)
+```
+
+#### Cleaning RNA-seq data
+
+Making this data set tidy might seem a bit reversed because there are so many genes and only 9 samples. The data thereby is made extremely wide when converted into a tidy tibble. However this is needed in order to make the PCA analysis where each gene is a variable and the samples are observations. Furthermore we can in this way add the variable/coloumns of metadata of which sample we are working with (AC, TF18 or rin) and what their status where when taken (where they pink or green).
+
+```{r}
+# Making the data tidy with genes as rows and each sample as a coloumn
+
+# Transposing the data so the variables (genes) are coloumns and observations (samples) are rows
+RNA_clean <- RNA_seq |>
+  rownames_to_column("gene") |>    # Making a column of genes instead of just hvaing the rownames
+  pivot_longer(-gene, names_to = "sample_id", values_to = "rpkm") |> # Pivot everything but genes to longer (meaning all the samples)
+  pivot_wider(names_from = gene, values_from = rpkm) |>
+  separate(sample_id, sep = " ", into = c("sample", "rep")) |>
+  separate(sample, sep = "-", into = c("sample", "status"))
+```
+
+## Save the workable files in data/ folder
 
 ```{r}
 # use rds to save data types
 write_rds(Data_set_1_clean, file = "../data/02_df1_clean.rds")
-
-#Data_Set1 <- read_csv("../data/data_set_1_clean.csv", show_col_types = F)
+write_rds(RNA_clean, file = "../data/02_rna_clean.rds")
 ```

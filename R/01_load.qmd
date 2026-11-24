@@ -3,9 +3,9 @@ title: "01_load.qmd"
 format: html
 ---
 
-This document loads the files and data needed to do the analysis performed in this project.
+This document loads the files and data needed to do the analysis performed in this project. There are 6 data sets possible to load from zenodo. Furthermore additional data of the RNA sequences where necessary in order to perform a PCA plot. Thereby this data is additionally loaded from NCBI.
 
-## Load Packages
+#### Load Packages
 
 This chunk loads the packages necessary to run the next chunk.
 
@@ -17,7 +17,7 @@ library("tidyverse")      # Used for the download function and mapping
 library("readxl")         # Used to read the excel files
 ```
 
-## Getting the Data
+#### Getting the Data
 
 The data is placed in excel files from zenodo.org. Each file is loaded into the data/\_raw in order to use it later in this project. During loading the names of each file is also cleaned for better readability. All files are loaded even though only supplemental data set 1 is used in later analysis. This enables getting an overview of all the data available.
 
