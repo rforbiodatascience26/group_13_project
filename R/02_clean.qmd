@@ -52,6 +52,8 @@ head(Data_set_1, 10)
 
 ```{r}
 #| message: false
+
+
 Data_set_1 <- read_excel(
   here("data/_raw/tpc119453_Supplemental_Data_Set_1.xlsx"), skip = 9)
 
@@ -154,7 +156,5 @@ Data_set_1_clean <- Data_set_1 |>
 #### Save the workable files in data/ folder
 
 ```{r}
-write_rds(Data_set_1_clean, file = "../data/Data_set_1_clean.csv")
-
-#Data_Set1 <- read_csv("../data/data_set_1_clean.csv", show_col_types = F)
+write_rds(Data_set_1_clean, file = "../data/02_Data_set_1_clean.csv")
 ```

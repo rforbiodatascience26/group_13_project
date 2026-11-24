@@ -93,6 +93,25 @@ gene_order <- c(
   "Solyc09g010210"
 )
 
+# rename("Gene_ID" = 1,
+#          "Description" = 2,
+#          "AC_G" = 3,
+#          "AC_P" = 4,
+#          "TF18_G" = 5,
+#          "TF18_P" = 6,
+#          "rin_G" = 7,
+#          "rin_P" = 8,
+#          "AC_P/AC_G" = 9,
+#          "TF18_P/TF18_G" = 10,
+#          "rin_P/rin_G" = 11,
+#          "TF18_P/AC_P" = 12,
+#          "rin_P/AC_P" = 13,
+#          "TF18_P/rin_P" = 14,
+#          "TF18_G/AC_G" = 15,
+#          "rin_G/AC_G" = 16,
+#          "TF18_G/rin_G" = 17,
+#          )
+
 heatmap_df <- Data_set_1_clean |> 
   select(
   Gene_ID,
