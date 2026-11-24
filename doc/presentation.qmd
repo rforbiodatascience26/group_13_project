@@ -4,25 +4,55 @@ subtitle: "Jakob Sandfort Ytte (s194659), Freja Bonde Stürup (s203517), Alma Ro
 format: 
   revealjs:
     theme: dark
-    slide-number: true
-    footer: "Group 13"
+    slide-number: true #adds slide numbers
+    footer: "Group 13" #adds a footer on slides
 
 ---
 
 # Introduction
  
-## Data from article
+## Article
 
 Transcriptional Regulation of Fruit Ripening by Tomato FRUITFULL Homologs and Associated MADS Box Proteins
 
-published 10th January 2014
+published 10th January 2014 by Fujisawa et al. 2014
+
+
+## Materials: Data from article
+
+which genes are regulated by the tomato transcription factors FUL1 and FUL2 during fruit ripening.
 
 # Methods and materials
 
-## Data wrangling
+## Methods used for modelling
+
+Methods: Which modelling did you use? Think of the methods section as a recipe for how to go from raw to results => Flow chart?
+
+Data wrangling
+
+Analysises used
+Heatmap 
+PCA 
 
 # Results
 
-## Figure 1A
+## Figure 1 - visualization of the expression 
+
+To create a visualization of the expression pattern for all the genes simultaneously, which genes are unregulated or downregulated. We created a heatmap. 
+
+In order to identify which genes have a similar expression pattern across all the samples. We added a dendogram to the heatmap 
+
+
+Insert Figure 1: Heatmap + dendrogram
+
+```{r}
+
+![Visualization of gene expression]("results/04_heatmap.png"){width=40}
+
+![](04_heatmap.png)
+
+```
+
+## Figure 
 
 ## Discussion
