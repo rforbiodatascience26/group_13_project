@@ -1,0 +1,69 @@
+---
+title: "06_analysis_PCA"
+format: html
+editor: visual
+---
+
+```{r}
+library("tidyverse")
+library("broom")      # devtools::install_github("tidymodels/broom")
+```
+
+### Loading clean RNA data
+
+Loading the clean data with each its variable as column and each observation as a row. The data used for this analysis is from RNA_seq, because that data includes all replicates which is needed for this PCA plot.
+
+```{r}
+# load the data
+RNA_clean <- read_rds("../data/02_rna_clean.rds")
+```
+
+### Scaling for PCA
+
+Some genes do not have any RPKM values and will therefore be dropped in this augment chunk. We also only choose numeric columns to not get the metadata into the analysis.
+
+```{r}
+# Scale data to unit variance
+pca_fit <- RNA_clean |>
+  select(where(is.numeric)) |> # retain only numeric columns
+  select(where(~var(.x) > 0)) |> # retain only columns with values above 0, else scale is failing
+  prcomp(scale. = TRUE) # do PCA on scaled data
+```
+
+### Plotting
+
+```{r}
+# Plot data in PC coordinates
+pca_plot <- pca_fit |>
+  augment(RNA_clean) |> # add original dataset back in to get the metadata
+  ggplot(aes(.fittedPC1, .fittedPC2, fill = status, shape = sample)) + 
+  geom_point(size = 3) +
+  scale_fill_manual(values = c(Green = "darkgreen", Pink = "hotpink"),
+                    guide = guide_legend(override.aes = list(shape = 21))) +
+  scale_shape_manual(values = c(AC = 21, rin = 22 , TF18 = 24)) +
+  theme_minimal(base_size = 12) +
+  labs(title = "PCA Analysis of Cell line and Maturation State",
+       x = "PCA1",
+       y = "PCA2",
+       shape = "Cell line",
+       fill = "Maturation state")
+
+pca_plot
+```
+
+PCA analysis of reads per kilbase million (RPKM) of RNA sequencing data. Each cell line in a specfic maturation state has been measured in biological triplicates. The green and red maturation state represents the colour of the tomato fruits at respectively 35 and 45 days after pollination.
+
+The following guide was used in the creation of the scaled data and the PCA plot: <https://clauswilke.com/blog/2020/09/07/pca-tidyverse-style/>
+
+### Save the plot with proper height and width
+
+```{r}
+ggsave(
+  filename = "../results/04_PCA.png",
+  plot = pca_plot,
+  width = 6,
+  height = 12,
+  units = "in",
+  dpi = 300
+)
+```
