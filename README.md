@@ -10,7 +10,7 @@ s215049 - Fredivildbasse
 insert link '.html'
 
 # Data availability
-All data that has been used in the project was retrieved from: https://zenodo.org/records/4936221
+Data that has been used in the project was retrieved from: https://zenodo.org/records/4936221 and https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi using the accession number GSE49289.
 The data originates from the article:
 Fujisawa et al., Transcriptional Regulation of Fruit Ripening by Tomato FRUITFULL Homologs and Associated MADS Box Proteins, The Plant Cell, Volume 26, Issue 1, January 2014, Pages 89–101, https://doi.org/10.1105/tpc.113.119453
 
@@ -20,6 +20,10 @@ In order to run this project the following packages must be installed:
 "readxl"
 "here"
 "readr"
+"ggdendro"
+"cowplot"
+"patchwork"
+"broom"
 
 # AI Declaration
 For this work several versions of AI was used:
