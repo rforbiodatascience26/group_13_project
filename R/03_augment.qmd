@@ -3,6 +3,13 @@ title: "03_augment"
 format: html
 ---
 
+```{r}
+#| label: packages
+#| message: false
+# Packages used should be installed before loading
+library("tidyverse")
+```
+
 In order to reproduce the supplementary figure 1A, we must create normalized data according to the authors descriptions. The purpose of this figure is to check that the two seperate RNA analyses, quantitative reverse transcriptase PCR and RNA sequencing, are compatible, which is required to asses the transcriptome profile of the genotypes in the article.
 
 According to the figure text in the 'Supplementary Table 1' ([link to zip file](https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/plcell/26/1/10.1105_tpc.113.119453/4/plcell_v26_1_89_s1.zip?Expires=1797371807&Signature=3BN0htJRMAATym2z08CPcXVMxuYvsSnkZsNURhndtgUOTyH7p~ZMPCHryFMQbh6D0FFbNpCs5IMmSkSP2QfCqHEyo95tK20eQ3Tmqi~ygJ42URncQo9-sN8jWQe9ln-3oojDYRZ0V9dtOSM2rFlfeGwoai15UGklX2UmItm0rpHsBmvIFID2dZPcR2zWWehQG4UB1GfNSSnCGneMn8rGFinTTgQNm9ib0ca9l2DT9Xlvf5t7w7HaHqz9VUncVV4HLdtd5~6X8XutM-7Dwvuny6ESP~BS76sSZnMESOVmwiHiTUKF2blhJOuixLS88IMN-VeSWBNBeNVK6qx00ryGbQ__&Key-Pair-Id=APKAIE5G5CRDK6RD3PGA)), the RPKM (reads per kilobase per million mapped reads) data must all be normalized such that the wild type expression after 45 days of growth (45 DAP or "P age") is equal to 1.
@@ -23,7 +30,7 @@ Data_set_1_sf1 <- Data_set_1_clean |>
   ) |> 
   #converts <chr> to <dbl> and removes ',' as thousands delimiter
   mutate(across(c(mean, sd), parse_number)) |>  
-  group_by(Gene_Name) |>  
+  group_by(Gene_Name) |>
   mutate(
    ref       = mean[Dataset == "AC" & Age == "P"],
    mean_norm = mean / ref,
@@ -97,12 +104,12 @@ Data_set_1_sf1 |>
 Data_set_1_sf2 <- Data_set_1_clean |> 
   select(15:24) |>       #select the FC data
   relocate(Gene_Name) |> 
-  rename(
-    AC_PG     = `FC_AC(P/G)`, #
-    TF18_P_AC = `FC_TF18_P/AC_P)`, #
-    rin_P_AC  = `FC_rin_P/AC_P)`, #
-    TF18_G_AC = `FC_TF18_G/AC_G)`,#
-    rin_G_AC  = `FC_rin_G/AC_G)`#
+  rename(                # Creating names that are easier to read
+    AC_PG     = `FC_AC(P/G)`, 
+    TF18_P_AC = `FC_TF18_P/AC_P`, 
+    rin_P_AC  = `FC_rin_P/AC_P`, 
+    TF18_G_AC = `FC_TF18_G/AC_G`,
+    rin_G_AC  = `FC_rin_G/AC_G`
   ) |> 
   mutate(
     AC_P   = 1,
@@ -117,7 +124,7 @@ Data_set_1_sf2 <- Data_set_1_clean |>
   pivot_longer(-Gene_Name,
                names_to = c("Genotype", "Age"),
                names_sep = "_",
-               values_to = "RNA_seq")
+               values_to = "RNA_seq_FC")
 
 Data_set_1_sf2
 ```
