@@ -19,6 +19,22 @@ According to the figure text in the 'Supplementary Table 1' ([link to zip file](
 As we are going to be working with this data separately in an analysis, we are going to create a new tibble, with the standardized columns, as opposed to adding it to the already cleaned data set.
 
 ```{r}
+#| label: Loading packages
+#| message: false
+
+library("tidyverse")
+library("readxl")
+```
+
+```{r}
+#| label: Load dataset
+#| message: false
+
+Data_set_1_clean <- read_rds("../data/Data_set_1_clean.csv")
+head(Data_set_1_clean)
+```
+
+```{r}
 Data_set_1_sf1 <- Data_set_1_clean |> 
   select(3:14,24) |>       #select the RPKM data
   relocate(Gene_Name) |>   #moves gene name column to be the first

@@ -154,7 +154,8 @@ Data_set_1_clean <- Data_set_1 |>
 #### Save the workable files in data/ folder
 
 ```{r}
-write_csv(Data_set_1_clean, file = "../data/Data_set_1_clean.csv")
+# use rds to save data types
+write_rds(Data_set_1_clean, file = "../data/02_df1_clean.csv")
 
 #Data_Set1 <- read_csv("../data/data_set_1_clean.csv", show_col_types = F)
 ```
