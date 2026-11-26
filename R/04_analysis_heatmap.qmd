@@ -135,8 +135,10 @@ gene_labels <- heatmap_df |>
   deframe() # converts data frame to vector
 ```
 
+### Extract the column names of the numeric features for subsequent plot ordering
+
 ```{r}
-cols_p <- colnames(heatmap_df[3:9])
+cols_p <- colnames(heatmap_df |> select(where(is.numeric)))
 ```
 
 ### Create Heatmap
@@ -230,11 +232,13 @@ p_dend <- p_dend +
     limits = c(0.5,                      # start at the middle of the first tile
                nrow(heatmap_mat) + 0.5), # end at the middle of the last tile 
     
-    expand = c(0, 0)                     # make sure no padding around the axes are added 
+    # make sure no padding around the axes are added
+    expand = c(0, 0)                     # Important for proper alignment of p_dend with p_heat
   )
 
 p_combined <- p_dend + p_heat  +
-  patchwork::plot_layout(widths = c(1, 5)) # squeeze p_dend to 1/5th the width of p_heat 
+  patchwork::plot_layout(widths = c(1, 5)) + # squeeze p_dend to 1/5th the width of p_heat 
+  labs(caption = "Data source: ")
 p_combined
 ```
 

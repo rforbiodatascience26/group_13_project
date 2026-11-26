@@ -33,6 +33,13 @@ pca_fit <- RNA_clean |>
 ### Plotting
 
 ```{r}
+# Extract the first two PCA's explained variance
+explained_var <- (pca_fit |> tidy(matrix = "eigenvalues") |> pluck("percent"))[1:2]
+
+# Format the x- and y-labels for plotting
+PC1 <- str_c("PC1 (", round(explained_var[1]*100, 2), "%)")
+PC2 <- str_c("PC2 (", round(explained_var[2]*100, 2), "%)")
+
 # Plot data in PC coordinates
 pca_plot <- pca_fit |>
   
@@ -49,13 +56,27 @@ pca_plot <- pca_fit |>
   
   theme_minimal(base_size = 12) +
   labs(title = "PCA of Cell line and Maturation State",
-       x = "PCA1",
-       y = "PCA2",
+       x = PC1,
+       y = PC2,
        shape = "Cell line",
        fill = "Maturation state",
-       caption = "Data source from GEO acession number: GSE49289")
+       caption = "Data source from GEO acession number: GSE49289") +
+  theme(plot.title = element_text(hjust = 0.5))
 
 pca_plot
+
+# hvis vi vil have et ekstra plot der viser hvor meget information vores forskellige dimensioner forklarer
+pca_fit |> 
+  tidy(matrix = "eigenvalues") |> 
+  ggplot(aes(x = PC, y = percent)) +
+  geom_bar(stat = "identity", fill = "darkgreen") +
+  scale_y_continuous(
+    labels = scales::percent_format()
+  ) +
+  theme_minimal() +
+  labs(y = "Percent Explained Variance",
+       title = "Distribution of PCs' Explained Variance")
+
 ```
 
 PCA analysis of reads per kilbase million (RPKM) of RNA sequencing data. Each cell line in a specfic maturation state has been measured in biological triplicates. The green and red maturation state represents the colour of the tomato fruits at respectively 35 and 45 days after pollination.
@@ -68,8 +89,8 @@ The following guide was used in the creation of the scaled data and the PCA plot
 ggsave(
   filename = "../results/04_PCA.png",
   plot = pca_plot,
-  width = 6,
-  height = 12,
+  width = 8,
+  height = 6,
   units = "in",
   dpi = 300
 )
