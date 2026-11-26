@@ -27,7 +27,7 @@ Some genes do not have any RPKM values and will therefore be dropped in this aug
 pca_fit <- RNA_clean |>
   select(where(is.numeric)) |> # retain only numeric columns
   select(where(~var(.x) > 0)) |> # retain only columns with values above 0, else scale is failing
-  prcomp(scale. = TRUE) # do PCA on scaled data
+  prcomp(scale. = TRUE) # do PCA on normalized data so difference in feature magnitudes won't interfere with the analysis
 ```
 
 ### Plotting
@@ -35,18 +35,25 @@ pca_fit <- RNA_clean |>
 ```{r}
 # Plot data in PC coordinates
 pca_plot <- pca_fit |>
+  
   augment(RNA_clean) |> # add original dataset back in to get the metadata
+  
+  # visualize the first two principal components 
   ggplot(aes(.fittedPC1, .fittedPC2, fill = status, shape = sample)) + 
   geom_point(size = 3) +
+  
   scale_fill_manual(values = c(Green = "darkgreen", Pink = "hotpink"),
                     guide = guide_legend(override.aes = list(shape = 21))) +
+  
   scale_shape_manual(values = c(AC = 21, rin = 22 , TF18 = 24)) +
+  
   theme_minimal(base_size = 12) +
-  labs(title = "PCA Analysis of Cell line and Maturation State",
+  labs(title = "PCA of Cell line and Maturation State",
        x = "PCA1",
        y = "PCA2",
        shape = "Cell line",
-       fill = "Maturation state")
+       fill = "Maturation state",
+       caption = "Data source from GEO acession number: GSE49289")
 
 pca_plot
 ```
