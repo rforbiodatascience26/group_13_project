@@ -27,6 +27,7 @@ Some genes do not have any RPKM values and will therefore be dropped in this aug
 pca_fit <- RNA_clean |>
   select(where(is.numeric)) |> # retain only numeric columns
   select(where(~var(.x) > 0)) |> # retain only columns with values above 0, else scale is failing
+  mutate(across(everything(), ~ log2(.x + 1))) |> # adding log transformation to avoid skewed RPKM data
   prcomp(scale. = TRUE) # do PCA on normalized data so difference in feature magnitudes won't interfere with the analysis
 ```
 
@@ -58,10 +59,12 @@ pca_plot <- pca_fit |>
   labs(title = "PCA of Cell line and Maturation State",
        x = PC1,
        y = PC2,
-       shape = "Cell line",
+       shape = "Plant line",
        fill = "Maturation state",
        caption = "Data source from GEO acession number: GSE49289") +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.background = element_rect(fill = "white", colour = NA),
+        panel.background = element_rect(fill = "white", colour = NA))
 
 pca_plot
 
@@ -74,6 +77,8 @@ pca_fit |>
     labels = scales::percent_format()
   ) +
   theme_minimal() +
+  theme(plot.background = element_rect(fill = "white", colour = NA),
+        panel.background = element_rect(fill = "white", colour = NA)) +
   labs(y = "Percent Explained Variance",
        title = "Distribution of PCs' Explained Variance")
 
